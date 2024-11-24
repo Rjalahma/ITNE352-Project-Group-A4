@@ -21,9 +21,11 @@ while n==True:
         print("5 back to the main menu ")
         number_2=int(input(" secound enter the required servise number "))
         if number_2==1:
+           sub_menue_choise="key_word"
            key_word=input(" key word to be searched with")
            msg=key_word
         if number_2==2:
+            sub_menue_choise="by_catogry"
             print('select the required catogry')
             print(" 1 business")
             print(" 2 genral")
@@ -51,6 +53,7 @@ while n==True:
             
 
         if number_2==3:
+            sub_menue_choise="by_country"
             print('select the required country')
             print(" 1 au")
             print(" 2 ca")
@@ -85,9 +88,9 @@ while n==True:
                     continue
            
         if number_2==4:
+           sub_menue_choise="list_all"
            msg="all_news"
         if number_2==5:
-            msg="quit"
             continue
     if number==2:
         request_type="sources"    
@@ -99,6 +102,7 @@ while n==True:
         print("5 back to the main menu  ")
         number_3=int(input("  thired enter the required servise number "))
         if number_3==1:
+            sub_menue_choise="by_catogry"
             print('select the required catogry')
             print(" 1 business")
             print(" 2 genral")
@@ -124,6 +128,7 @@ while n==True:
                     print("not vlaid catogry")
                     continue
         if number_3==2:
+            sub_menue_choise="by_country"
             print('select the required country')
             print(" 1 au")
             print(" 2 ca")
@@ -158,6 +163,7 @@ while n==True:
                     continue
            
         if number_3==3:
+            sub_menue_choise="by_language"
             print("choose the required language")
             print(" 1 arabic")
             print(" 2 engalish")
@@ -171,20 +177,18 @@ while n==True:
                     print("not vlaid language")
                     continue
         if number_3==4:
+           sub_menue_choise="list_all"
            msg="all_language"
         if number_3==5:
-           
-           
-            
-            
-            msg="quit"
             continue
         
         
     if number==3:
         msg="quit"
         n=False
+    
     clinet_sock.send(request_type.encode("ascii"))
+    clinet_sock.send(sub_menue_choise.encode("ascii"))
     clinet_sock.send(msg.encode("ascii"))
 
 data = clinet_sock.recv(1024)
