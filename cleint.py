@@ -4,7 +4,6 @@ clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clinet_sock.connect(("127.0.0.1",49999))
 print(" this is my client ")
 
-
 n=True
 while n==True:
     print("Main menu ")
