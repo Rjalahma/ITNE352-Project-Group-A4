@@ -15,7 +15,7 @@ def handle_server():
     clientthread=threading.thread(target=handle_client, arg=(sock,clientID))
     clientthread.start()
 
-
+#test
  
 def handle_client(sock, clientID):  
    #try:
