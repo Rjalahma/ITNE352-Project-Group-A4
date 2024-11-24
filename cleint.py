@@ -13,6 +13,7 @@ while n==True:
     print("3 Quit ")
     number=int(input(" fist enter the required servise number "))
     if number==1:
+        request_type="headlines"
         print("Search headline menu")
         print("1 search for key words ")
         print("2 search for catogry ")
@@ -89,8 +90,8 @@ while n==True:
         if number_2==5:
             msg="quit"
             continue
-        #clinet_sock.send(msg)
-    if number==2:    
+    if number==2:
+        request_type="sources"    
         print("List of sources menu")
         print("1 search by catogry ")
         print("2 search by country ")
@@ -184,8 +185,9 @@ while n==True:
     if number==3:
         msg="quit"
         n=False
+    clinet_sock.send(request_type.encode("ascii"))
     clinet_sock.send(msg.encode("ascii"))
- 
+
 data = clinet_sock.recv(1024)
  
 print( "data recived",data.decode("ascii"))
