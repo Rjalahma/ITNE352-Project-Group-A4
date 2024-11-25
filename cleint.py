@@ -199,10 +199,12 @@ while n==True:
     print("")
     clinet_sock.send(sub_menue_choise.encode("ascii"))
     print("")
+
     clinet_sock.send(msg.encode("ascii"))
-    data = clinet_sock.recv(1024)
-    print( "data recived",data.decode("ascii"))
-    
+    data = clinet_sock.recv(1024).decode("ascii")
+    print( "data recived",data)
+    print("")
+        
 
 
 clinet_sock.close()
