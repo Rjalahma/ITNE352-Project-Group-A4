@@ -1,21 +1,7 @@
 import socket
 import threading
 import time
-#import sys
 
-def handle_server():
-   print(30 * "-")
-   print("the server is running")
-   ssocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
-   ssocket.bind(("127.0.0.1", 49999))
-   ssocket.listen(5)
-   print("the server now is waiting for client")
-   while True:
-    sock,clientID=ssocket.accept()
-    clientthread=threading.Thread(target=handle_client, arg=(sock,clientID))
-    clientthread.start()
-
- 
 def handle_client(sock, clientID):  
    
      print(30 * "-")
@@ -29,7 +15,7 @@ def handle_client(sock, clientID):
         print("requested service type is: ", request)
         subRequest=sock.recv(2048).decode('ascii')
         print("requested sub is: ", subRequest)
-        dataRequested=sock.recv(2048).decode('ascii')
+        dataRequested=sock.recv(2048).decode('ascii')    
         print("requested data is: ", dataRequested)
        except Exception as e:
             print("Error receiving data: ",e)
@@ -135,19 +121,31 @@ def handle_client(sock, clientID):
               else:
                  print("the client enterd unavaliable language, wait fot the client to enter again")
            elif subRequest=="list_all":
-              if dataRequested=="all_language":  # isnt suppoused to be all sources?????
+              if dataRequested=="all_sources": 
                  msg="all sources" 
 
         except Exception as e:
                 print("Error processing sources request: ",e)
 
-     try:          
-      sock.sendall(msg.encode('ascii'))   
-      sock.close()
-     except Exception as e:
-      print(f"Error sending data: {e}")
+       #try:          
+       print("data sent already",sock.sendall(msg.encode('ascii'))  ) 
+       sock.close()
+       #except Exception as e:
+        #print(f"Error sending data: {e}")
      
+def handle_server():
+   print(30 * "-")
+   print("the server is running")
+   ssocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
+   ssocket.bind(("127.0.0.1", 49999))
+   ssocket.listen(5)
+   print("the server now is waiting for client")
+   while True:
+    sock,clientID=ssocket.accept()
+    clientthread=threading.Thread(target=handle_client, args=(sock,clientID))
+    clientthread.start()
+
+ 
+
             
-    
-if __name__ == "__main__":
-    handle_server()
+handle_server()

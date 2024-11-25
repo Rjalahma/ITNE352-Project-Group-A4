@@ -6,34 +6,38 @@ print(" this is my client ")
 
 n=True
 while n==True:
-    print("Main menu ")
+    print("Main menu: ")
     print("1 search for headings ")
     print("2 list all sourses ")
     print("3 Quit ")
-    number=int(input(" fist enter the required servise number "))
+    print(" ")
+    number=int(input(" first enter the required service number: "))
+    print(" ")
     if number==1:
         request_type="headlines"
-        print("Search headline menu")
+        print("Search headline menu:")
         print("1 search for key words ")
         print("2 search for catogry ")
         print("3 search for country ")
         print("4 List all new headline ")
         print("5 back to the main menu ")
-        number_2=int(input(" secound enter the required servise number "))
+        print(" ")
+        number_2=int(input("second enter the required service number :"))
         if number_2==1:
            sub_menue_choise="key_word"
            key_word=input(" key word to be searched with")
            msg=key_word
         if number_2==2:
             sub_menue_choise="by_catogry"
-            print('select the required catogry')
+            print('select the required catogry:')
             print(" 1 business")
             print(" 2 genral")
             print(" 3 health")
             print(" 4 seince")
             print(" 5 sport")
             print(" 6 technology")
-            catogry_num=int(input(" enter required catogry number"))
+            print(" ")
+            catogry_num=int(input(" enter required catogry number:"))
             match catogry_num:
                 case 1:
                     msg="business_news"
@@ -178,7 +182,7 @@ while n==True:
                     continue
         if number_3==4:
            sub_menue_choise="list_all"
-           msg="all_language"
+           msg="all_sources"
         if number_3==5:
             continue
         
@@ -187,13 +191,20 @@ while n==True:
         msg="quit"
         n=False
     
+    
+    
+    
+    
     clinet_sock.send(request_type.encode("ascii"))
+    print("")
     clinet_sock.send(sub_menue_choise.encode("ascii"))
+    print("")
     clinet_sock.send(msg.encode("ascii"))
+    data = clinet_sock.recv(1024)
+    print( "data recived",data.decode("ascii"))
+    
 
-data = clinet_sock.recv(1024)
- 
-print( "data recived",data.decode("ascii"))
+
 clinet_sock.close()
 
 
