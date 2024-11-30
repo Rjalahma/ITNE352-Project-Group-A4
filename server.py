@@ -12,11 +12,19 @@ def handle_client(sock, clientID):
       
           
         try:  
-            request=sock.recv(2048).decode('ascii')
+            # request=sock.recv(2048).decode('ascii')
+            data =sock.recv(2084).decode()
+            values = data.split("|")
+            print(" this is the server values ",values)
+            # print("requested service type is: ", request)
+            # request=sock.recv(2048).decode('ascii')
+            # print("requested sub is: ", subRequest)
+            # dataRequested=sock.recv(2048).decode('ascii')    
+            # print("requested data is: ", dataRequested)
+            request, subRequest,dataRequested = values
+
             print("requested service type is: ", request)
-            subRequest=sock.recv(2048).decode('ascii')
             print("requested sub is: ", subRequest)
-            dataRequested=sock.recv(2048).decode('ascii')    
             print("requested data is: ", dataRequested)
         except Exception as e:
             print("Error receiving data: ",e)
