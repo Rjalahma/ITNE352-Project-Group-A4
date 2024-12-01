@@ -1,21 +1,31 @@
 import socket
 
-
-def send(message):
-    clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    clinet_sock.connect(("127.0.0.1",49999))
+clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+clinet_sock.connect(("127.0.0.1",49999))
    
-    clinet_sock.send(message.encode("ascii"))
-    # print(" inside send client ")
-    # clinet_sock.send(request_type.encode("ascii"))
-    # print("")
-    # clinet_sock.send(sub_menue_choise.encode("ascii"))
-    # print("")
-    # clinet_sock.send(msg.encode("ascii"))
-    data = clinet_sock.recv(1024).decode("ascii")
-    clinet_sock.close()
-    return data
+def send(message):
+    try:
+        clinet_sock.send(message.encode("ascii"))
+        # print(" inside send client ")
+        # clinet_sock.send(request_type.encode("ascii"))
+        # print("")
+        # clinet_sock.send(sub_menue_choise.encode("ascii"))
+        # print("")
+        # clinet_sock.send(msg.encode("ascii"))
+        # data = clinet_sock.recv(1024).decode("ascii")
+        # clinet_sock.close()
+        # return data
+    except Exception as e:
+        print("Error in sending:", e)
+def recv():
+    try :
 
+        data = clinet_sock.recv(1024).decode("ascii")
+        return data
+    except Exception as e:
+        print("Error in reciving:", e)
+def client_close():
+    clinet_sock.close()
 # import Najat_gui as f
 # n=True
 # while n==True:

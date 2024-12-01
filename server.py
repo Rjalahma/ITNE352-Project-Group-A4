@@ -1,197 +1,147 @@
 import socket
 import threading
 import time
-import requests
 
 def handle_client(sock, clientID):  
    
-     print(30 * "-")
-     print("New connection from", clientID[0], "is accepted", "with the port number:", clientID[1])
-     print("Wait for the client to send a request")
-     apikey="d07953f1256b41a6a39f2429c02f0d0e"
+    print(30 * "-")
+    print("New connection from", clientID[0], "is accepted", "with the port number:", clientID[1])
+    print("Wait for the client to send a request")
 
-     while True:
+    while True:
       
-       try:  
+          
+        try:  
+            # request=sock.recv(2048).decode('ascii')
             data =sock.recv(2084).decode()
             values = data.split("|")
             print(" this is the server values ",values)
+            # print("requested service type is: ", request)
+            # request=sock.recv(2048).decode('ascii')
+            # print("requested sub is: ", subRequest)
+            # dataRequested=sock.recv(2048).decode('ascii')    
+            # print("requested data is: ", dataRequested)
             request, subRequest,dataRequested = values
 
             print("requested service type is: ", request)
             print("requested sub is: ", subRequest)
             print("requested data is: ", dataRequested)
-       except Exception as e:
+        except Exception as e:
             print("Error receiving data: ",e)
             break
-
-        # if client chose to quit
-       if request=="quit":        
-         print("Client ",clientID,"has quit the connection")
-         sock.sendall("Goodbye!".encode('ascii'))
-         break
-         
         
-       elif request=="headlines": 
-        url="https://newsapi.org/v2/top-headlines"
-        params = { "apiKey": apikey, "pageSize": 15 }
-        try:
-           # searching by a keyword 
-           if subRequest=="key-word": 
-             params["q"] = dataRequested
 
-            # searching by category 
-           elif subRequest=="by_catogry":
-                categories = {
-                        "business_news": "business",
-                        "general_news": "general",
-                        "health_news": "health",
-                        "science_news": "science",
-                        "sport_news": "sports",
-                        "technology_news": "technology"  }
-                category= categories.get(dataRequested)
-                if category:
-                     params["category"] = category
-                else:
-                   print("inavlid catogery by the user")
-                   sock.sendall("Invalid headline category code entered by the client.".encode('ascii'))
-
-            # searching by country 
-           elif subRequest=="by_country": 
-                 countries = {  "au_news": "au",
-                                "ca_news": "ca",
-                                "jp_news": "jp",
-                                "ae_news": "ae",
-                                "sa_news": "sa",
-                                "kr_news": "kr",
-                                "us_news": "us",
-                                "ma_news": "ma"   }
+            # if client chose to quit
+        if request=="quit":        
+            print("Client ",clientID,"has quit the connection")
+            sock.sendall("Goodbye!".encode('ascii'))
+            break
         
-                 country=countries.get(dataRequested)
-                 if country:
-                    params["country"] = country
+            # if client chose to search by headings
+        elif request=="headlines":  
+            
+            try:
+                if subRequest=="key-word": 
+                    msg="keyword headings"
+                elif subRequest=="by_catogry":
+                    if dataRequested=="business_news":
+                        msg="business headings"
+                    elif dataRequested=="genral_news":
+                        msg="general headings"
+                    elif dataRequested=="health_news":
+                        msg="health headings"
+                    elif dataRequested=="seince_news":
+                        msg="science headings"
+                    elif dataRequested=="sport_news":
+                        msg="sport headings"
+                    elif dataRequested=="technology_news":
+                        msg="technology headings"
+                    else:
+                        print("the client enterd wrong input, wait fot the client to enter again")
 
-                 else:
-                   print("the client enterd wrong headline country code, wait fot the client to enter again")
-                   sock.sendall("Invalid headline country code entered by the client.".encode('ascii'))
-                   break
-                   #.......return or break?
+                elif subRequest=="by_country": 
+                    if dataRequested=="au_news":
+                        msg="Australia headings"
+                    elif dataRequested=="ca_news":
+                        msg="Canada headings"
+                    elif dataRequested=="jp_news":
+                        msg="japan headings"
+                    elif dataRequested=="ae_news":
+                        msg="United Arab Emirates headings"
+                    elif dataRequested=="sa_news":
+                        msg="Saudi Arabia headings"
+                    elif dataRequested=="kr_news":
+                        msg="South Korea headings"
+                    elif dataRequested=="us_news":
+                        msg="United States headings"
+                    elif dataRequested=="ma_news":
+                        msg="Morocco headings"
+                    else:
+                        print("the client enterd wrong country code, wait fot the client to enter again")
 
-            # if client chose to list all headlines
-           elif subRequest=="list_all":  
-              pass
-              
-           else:
-                    sock.sendall("Invalid subRequest type.".encode('ascii'))
-                    break
-           
-        except Exception as e :
-           print("error handling headlines subrequests", e)   
+                elif subRequest=="list_all":  
+                    msg="all headings"   
+                #????? in client code shouldnt we add else option for if the user enterd somrthing is not in the list? after line 94
+            except Exception as e:
+                    print(f"Error processing headlines request: {e}")
+                    msg = "Error processing headlines request"
 
-            #sending the results  :
-        print("now we will start getting the request")   # for testing purposes 
-        response = requests.get(url, params=params)
-
-        print("now we will save it into json file")   # for testing purposes         
-        results=response.json()
-
-        articles=results.get('articles')
-        print("we will extract titles to send them ")   # for testing purposes    
-
-        titles = []
-        for article in articles:
-         title= article.get('title')
-         if title:  
-               titles.append(title)
-
-        print("titles are extracted , now they will be sent ") # for testing purposes  
-        titles_str = "\n".join(titles)  
-        print(titles_str)  # for testing purposes  
-
-        sock.sendall(titles_str.encode('ascii'))
-        print("titles already sent ")   # for testing purposes  
- 
-       elif request=="sources":
-        url="https://newsapi.org/v2/top-headlines/sources"
-        params = { "apiKey": apikey, "pageSize": 15 }
-
-        try: 
-           if subRequest=="by_catogry":
-                
-                categories = {
-                        "business_sources": "business",
-                        "genral_sources": "general",
-                        "health_sources": "health",
-                        "seince_source": "science",
-                        "sport_sources": "sports",
-                        "technology_sources": "technology"  }
-                category= categories.get(dataRequested)
-
-                if category:
-                     params["category"] = category
-
-                else:
-                   print("inavlid source catogery by the user")
-                   sock.sendall("Invalid source category code entered by the client.".encode('ascii'))
-
-           elif subRequest=="by_country":
-                 countries = {
-                        "au_sources": "au",
-                        "ca_sources": "ca",
-                        "jp_sources": "jp",
-                        "ae_sources": "ae",
-                        "sa_sources": "sa",
-                        "kr_sources": "kr",
-                        "us_sources": "us",
-                        "ma_sources": "ma"
-                        }
-                 country=countries.get(dataRequested)
-
-                 if country:
-                    params["country"] = country
-
-                 else:
-                   print("the client enterd wrong source country code, wait fot the client to enter again")
-                   sock.sendall("Invalid  source country code entered by the client.".encode('ascii'))
-                   break
-                 
-           elif subRequest=="by_language":
-                    
-                    languages = {  "ar": "arabic","en": "english"  }
-                    language = languages.get(dataRequested)
-                    if language:
-                        params["language"] = dataRequested
+           # if client chose to list all sources
+        elif request=="sources":  
+            try: 
+                if subRequest=="by_catogry":
+                    if dataRequested=="business_sources":
+                        msg="all business sources"
+                    elif dataRequested=="genral_sources":
+                        msg="all general sources"
+                    elif dataRequested=="health_sources":
+                        msg="all health sources"
+                    elif dataRequested=="seince_sources":
+                        msg="all scince sources"
+                    elif dataRequested=="sport_sources":
+                        msg="all sport sources"
+                    elif dataRequested=="technology_sources":
+                        msg="all technology sources"
+                    else:
+                        print("the client wrote unvlaid catogry, wait fot the client to enter again")
+                elif subRequest=="by_country":
+                    if dataRequested=="au_sources":
+                        msg="Australia sources"
+                    elif dataRequested=="ca_sources":
+                        msg="Canada sources"
+                    elif dataRequested=="jp_sources":
+                        msg="japan sources"
+                    elif dataRequested=="ae_sources":
+                        msg="United Arab Emirates sources"
+                    elif dataRequested=="sa_sources":
+                        msg="Saudi Arabia sources"
+                    elif dataRequested=="kr_sources":
+                        msg="South Korea sources"
+                    elif dataRequested=="us_sources":
+                        msg="United States sources"
+                    elif dataRequested=="ma_sources":
+                        msg="Morocco sources"
+                    else:
+                        print("the client enterd wrong country code, wait fot the client to enter again")
+                elif subRequest=="by_language":
+                    if dataRequested=="ar":
+                        msg="arabic sources"
+                    elif dataRequested=="en":
+                        msg="english sources" 
                     else:
                         print("the client enterd unavaliable language, wait fot the client to enter again")
-                        sock.sendall("Invalid language code entered by the client.".encode('ascii'))
-                        break
+                elif subRequest=="list_all":
+                    if dataRequested=="all_sources": 
+                        msg="all sources" 
 
-            # if client chose to list all sources
-           elif subRequest=="list_all":
-              pass
-           else:
-                    sock.sendall("Invalid subRequest type.".encode('ascii'))
-                    break
+            except Exception as e:
+                    print("Error processing sources request: ",e)
 
-                 #sending the results   
-           print("now we will start getting the request")   # for testing purposes 
-           response=requests.get(url, params=params)
-           if response.status_code == 200:
-                results=response.json()
-                print("now we will save it into json file")   # for testing purposes
-                titles=results ['title']
-                print("titles are extracted , now they will be sent ")   # for testing purposes
-                sock.sendall(titles.encode('ascii'))
-                print("titles already sent ")   # for testing purposes 
-           else:
-                sock.sendall("Error: Failed to fetch sources data. Status code :".encode('ascii'),response.status_code)
-
-        except Exception as e:
-                print("Error processing sources request: ",e)
-
-                
-       sock.close()
-    
+       #try:          
+        print("data sent already",sock.send(msg.encode('ascii'))  ) 
+    sock.close()
+       #except Exception as e:
+        #print(f"Error sending data: {e}")
      
 def handle_server():
    print(30 * "-")
@@ -204,5 +154,8 @@ def handle_server():
     sock,clientID=ssocket.accept()
     clientthread=threading.Thread(target=handle_client, args=(sock,clientID))
     clientthread.start()
+
+ 
+
             
 handle_server()
