@@ -1,14 +1,36 @@
 import socket
 import threading
-import time
 import requests
+import json
+from newsapi import NewsApiClient
+
+apikey="d07953f1256b41a6a39f2429c02f0d0e"
+newsapi= NewsApiClient(api_key=apikey)
+
+def get_headlines(params):
+    try:
+       # response = requests.get(newsapi.get_top_headlines(), params=params)
+        response = newsapi.get_top_headlines(**params)
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        print("Error fetching headlines: ",e)
+
+def get_sources(params):
+    try:
+        response = newsapi.get_sources(**params)
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        print("Error fetching sources:", e)
+                 
 
 def handle_client(sock, clientID):  
    
      print(30 * "-")
      print("New connection from", clientID[0], "is accepted", "with the port number:", clientID[1])
      print("Wait for the client to send a request")
-     apikey="d07953f1256b41a6a39f2429c02f0d0e"
+     
 
      while True:
       
@@ -21,6 +43,7 @@ def handle_client(sock, clientID):
             print("requested service type is: ", request)
             print("requested sub is: ", subRequest)
             print("requested data is: ", dataRequested)
+
        except Exception as e:
             print("Error receiving data: ",e)
             break
@@ -33,7 +56,6 @@ def handle_client(sock, clientID):
          
         
        elif request=="headlines": 
-        url="https://newsapi.org/v2/top-headlines"
         params = { "apiKey": apikey, "pageSize": 15 }
         try:
            # searching by a keyword 
@@ -55,6 +77,7 @@ def handle_client(sock, clientID):
                 else:
                    print("inavlid catogery by the user")
                    sock.sendall("Invalid headline category code entered by the client.".encode('ascii'))
+                   continue
 
             # searching by country 
            elif subRequest=="by_country": 
@@ -74,8 +97,8 @@ def handle_client(sock, clientID):
                  else:
                    print("the client enterd wrong headline country code, wait fot the client to enter again")
                    sock.sendall("Invalid headline country code entered by the client.".encode('ascii'))
-                   break
-                   #.......return or break?
+                   continue
+                  
 
             # if client chose to list all headlines
            elif subRequest=="list_all":  
@@ -83,38 +106,28 @@ def handle_client(sock, clientID):
               
            else:
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
-                    break
+                    continue
            
         except Exception as e :
            print("error handling headlines subrequests", e)   
 
-            #sending the results  :
-        print("now we will start getting the request")   # for testing purposes 
-        response = requests.get(url, params=params)
-
-        print("now we will save it into json file")   # for testing purposes         
-        results=response.json()
-
-        articles=results.get('articles')
-        print("we will extract titles to send them ")   # for testing purposes    
-
+       
+      #extracting the headlines :
+       results = get_headlines(params)
+       if results:
         titles = []
+        articles = results.get('articles', [])
         for article in articles:
-         title= article.get('title')
-         if title:  
-               titles.append(title)
+         if article.get('title'):
+            titles.append(article['title'])
+            titles_str = "\n".join(titles) # convert the list to a string 
+        else:
+         titles_str = "No results found."
+         # sending the titles
+        sock.sendall(titles_str.encode('ascii'))  # to send the titles      
 
-        print("titles are extracted , now they will be sent ") # for testing purposes  
-        titles_str = "\n".join(titles)  
-        print(titles_str)  # for testing purposes  
-
-        sock.sendall(titles_str.encode('ascii'))
-        print("titles already sent ")   # for testing purposes  
- 
        elif request=="sources":
-        url="https://newsapi.org/v2/top-headlines/sources"
         params = { "apiKey": apikey, "pageSize": 15 }
-
         try: 
            if subRequest=="by_catogry":
                 
@@ -133,6 +146,7 @@ def handle_client(sock, clientID):
                 else:
                    print("inavlid source catogery by the user")
                    sock.sendall("Invalid source category code entered by the client.".encode('ascii'))
+                   continue
 
            elif subRequest=="by_country":
                  countries = {
@@ -153,7 +167,7 @@ def handle_client(sock, clientID):
                  else:
                    print("the client enterd wrong source country code, wait fot the client to enter again")
                    sock.sendall("Invalid  source country code entered by the client.".encode('ascii'))
-                   break
+                   continue
                  
            elif subRequest=="by_language":
                     
@@ -164,32 +178,31 @@ def handle_client(sock, clientID):
                     else:
                         print("the client enterd unavaliable language, wait fot the client to enter again")
                         sock.sendall("Invalid language code entered by the client.".encode('ascii'))
-                        break
+                        continue
 
             # if client chose to list all sources
            elif subRequest=="list_all":
               pass
            else:
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
-                    break
+                    continue
 
-                 #sending the results   
-           print("now we will start getting the request")   # for testing purposes 
-           response=requests.get(url, params=params)
-           if response.status_code == 200:
-                results=response.json()
-                print("now we will save it into json file")   # for testing purposes
-                titles=results ['title']
-                print("titles are extracted , now they will be sent ")   # for testing purposes
-                sock.sendall(titles.encode('ascii'))
-                print("titles already sent ")   # for testing purposes 
-           else:
-                sock.sendall("Error: Failed to fetch sources data. Status code :".encode('ascii'),response.status_code)
-
+                 #sending the results 
+           results = get_sources(params)
+           if results:
+            sources = []
+            articles = results.get('sources', [])
+            for sources in articles:
+             if sources.get('name'):
+                sources.append(article['name'])
+            sources_str = "\n".join(titles)
+           else : 
+            sources_str = "No results found."
         except Exception as e:
                 print("Error processing sources request: ",e)
+         # sending the sources 
+        sock.sendall(sources_str.encode('ascii'))  # to send the titles      
 
-                
        sock.close()
     
      
