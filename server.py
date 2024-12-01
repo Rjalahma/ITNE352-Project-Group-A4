@@ -30,7 +30,7 @@ def handle_client(sock, clientID):
 
     while True:
         try:
-            user_name=socke.recv(2048).decode()  
+            user_name=sock.recv(2048).decode()  
             print("this user is",user_name)
             data = sock.recv(2084).decode()  # Receive data from client
             values = data.split("|")
