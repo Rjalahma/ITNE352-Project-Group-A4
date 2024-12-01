@@ -29,7 +29,9 @@ def handle_client(sock, clientID):
     print("Wait for the client to send a request")
 
     while True:
-        try:  
+        try:
+            user_name=socke.recv(2048).decode()  
+            print("this user is",user_name)
             data = sock.recv(2084).decode()  # Receive data from client
             values = data.split("|")
             print("This is the server values:", values)
