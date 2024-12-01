@@ -1,6 +1,8 @@
 import socket
 import threading
 import time
+import json
+import requests
 
 def handle_client(sock, clientID):  
    
@@ -33,6 +35,7 @@ def handle_client(sock, clientID):
         try:
            if subRequest=="key-word": 
              msg="keyword headings"
+             url=
            elif subRequest=="by_catogry":
                 if dataRequested=="business_news":
                   msg="business headings"
@@ -127,11 +130,10 @@ def handle_client(sock, clientID):
         except Exception as e:
                 print("Error processing sources request: ",e)
 
-       #try:          
+               
        print("data sent already",sock.sendall(msg.encode('ascii'))  ) 
        sock.close()
-       #except Exception as e:
-        #print(f"Error sending data: {e}")
+    
      
 def handle_server():
    print(30 * "-")
@@ -147,5 +149,5 @@ def handle_server():
 
  
 
-            
+             
 handle_server()
