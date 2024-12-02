@@ -1,9 +1,20 @@
 import socket
-
+server_add=("127.0.0.1",49999)
+# clinet_sock=None
+username_sent=False
 clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clinet_sock.connect(("127.0.0.1",49999))
-   
-def send(message):
+# def client_connaction():
+#     global clinet_sock
+#     try :
+#         if clinet_sock:
+#              clinet_sock.close()
+#         clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+#         clinet_sock.connect(server_add)
+#         print("conaction is esablished")
+#     except Exception as e:
+#         print(" error at esablishing the connaction")
+def send_choice(message):
     try:
         clinet_sock.send(message.encode("ascii"))
         # print(" inside send client ")
@@ -17,6 +28,20 @@ def send(message):
         # return data
     except Exception as e:
         print("Error in sending:", e)
+        # client_connaction()
+
+def send_username_request(username,request_type,sub_menue_choise,msg):
+    # global username_sent
+    # if not username_sent:
+    try:
+        message = "|".join([username,request_type,sub_menue_choise,msg])
+        clinet_sock.send(message.encode("ascii"))
+        # username_sent = True
+        print(" user name and request is  sent from najat client ")
+        print(" the message is ",message)
+    # else:
+    except Exception as e:
+        print("  error at sending username and request from najat client ")
 def recv():
     try :
 
@@ -25,7 +50,12 @@ def recv():
     except Exception as e:
         print("Error in reciving:", e)
 def client_close():
-    clinet_sock.close()
+    try :
+         if clinet_sock:
+            clinet_sock.close()
+            print(" conaction is closed ")
+    except Exception as e :
+        print(" eroor at closing the client ")
 # import Najat_gui as f
 # n=True
 # while n==True:
@@ -49,4 +79,4 @@ def client_close():
 # else:
 #     print("")
 # f.root.mainloop()
-    
+# client_connaction()   
