@@ -119,6 +119,7 @@ def handle_client(sock, clientID):
                     for title in titles:
                         titles_str+= title["title"]+"\n"
                     titles_str = "\n".join([article["title"] for article in titles])
+                    print("the titles are:",titles_str)
                 else:
                     titles_str = "No results found."
 
@@ -191,7 +192,7 @@ def handle_client(sock, clientID):
                     sources_str = ""
                     for source in sources:
                         sources_str += source["name"] + "\n"
-
+                    print("the sources:",sources_str)
                 else:
                     sources_str = "No results found"
             
