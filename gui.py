@@ -8,33 +8,57 @@ sub_menue_choise=""
 msg=""
 send_button=False
 enter_button=False
+global userName_is_sent 
+userName_is_sent=False
+global userName
+userName=""
+request_counter=0
 def clear():
       for widget in root.grid_slaves():
         widget.destroy()
-
+def view_full_data(value):
+    data=value
+    if len(data)==0:
+        clear()
+        Error_labale=Label(root,text=" error at reciving the data ").grid(row=0, column=0)
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+    else:
+        clear()
+        Label(root,text=str(data)).grid(row=0, column=0,columnspan=5)
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
 def view_data(value):
     w=value
     clear()
-    Label(root, text="Data Received:").grid(row=0, column=0)
+    if not value:
+        Error_labale=Label(root,text=" error at reciving the titles ").grid(row=0, column=0)
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+        return
+    Label(root, text=" choose from those titles ").grid(row=0, column=0)
     print(" choose from ",w)
     c=0
     m=StringVar()
-    n=len(list)
-    for i in range(0,n):
-        k=list[i]
-        Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
-        c=c+1
-    client.send(m.get())
-    full_data=recv_full_data()
-    Label(root,text=str(full_data), wraplength=300 ).grid(row=1,column=0)
-    Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
-def submit(value):
-    b=value
-    send_username(b)
-    clear()
-    welcom="welcom",str(value)
-    Label(root,text=welcom).grid(row=0, column=0)
-    Button(root, text=" Go to main menu", command=main_menu).grid(row=2, column=0)
+    n=len(value)
+    # n=len(list)
+    if n==0:
+        clear()
+        
+    else:
+        for i in range(0,n):
+            k=list[i]
+            Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
+            c=c+1
+        client.send_choice(m.get())
+        full_data=recv_full_data()
+        Label(root,text=str(full_data), wraplength=300 ).grid(row=1,column=0)
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
+# def submit(value):
+#     global userName
+#     userName=value
+#     send_username(userName)
+#     clear()
+#     welcom="welcom",str(value)
+#     Label(root,text=welcom).grid(row=0, column=0)
+#     Button(root, text=" Go to main menu", command=main_menu).grid(row=2, column=0)
 def send(value):
     global button_clicked,msg,send_button
     print("vlaue,",value)
@@ -46,9 +70,15 @@ def send(value):
     myy_labale1=Label(root,text=" you choosed ").grid(row=0,column=0,columnspan=2)
     myy_labale=Label(root,text=value)
     # msg=value
+    global request_counter
     myy_labale.grid(row=1,column=0,columnspan=2)
     if is_clicked():
+        # print("request counter number is ",request_counter) 
+        # if request_counter>=1:
+            # client.send(userName)
         m=send_request()
+        
+        # request_counter+=1
         print(" request  is sent to server")
         # p,returned_data=return_data()
         # view_data(p)
@@ -196,10 +226,10 @@ def closing():
 def main_menu():
     clear()
     global request_type,sub_menue_choise,msg
-    root.title("main menu")
     request_type=""
     sub_menue_choise=""
     msg=""
+    root.title("main menu")
     my_lable=Label(root,text="welecom").grid(row=0,column=1)
     my_lable2=Label(root,text="choose from the ... ").grid(row=1,column=1)
     h=Button(root,command=heald_menu,text="search for headings",padx=35,pady=10).grid(row=2,column=0)
@@ -209,6 +239,8 @@ def enter_input_username():
     # global button_clicked,msg,request_type,sub_menue_choise,enter_button
     # button_clicked = True
     # enter_button=True
+    global userName
+    userName=userName_box.get()
     h=userName_box.get()
     clear()
     my3=Label(root,text=(" your user name is ",h))
@@ -218,7 +250,8 @@ def enter_input_username():
     print("user name is send")
     b5=Button(root,text=" go to the main menu",command=main_menu,padx=68)
     b5.grid(row=1,column=0,columnspan=2)
-    Button(root,text="submit",command=lambda:submit(h)).grid(row=2,column=0,columnspan=2)
+    # Button(root,text="submit",command=lambda:submit(h)).grid(row=2,column=0,columnspan=2)
+    b10=Button(root,text="  Go to the main menu",command=main_menu,padx=50).grid(row=4,column=0,columnspan=2)
 
     
 
@@ -229,6 +262,7 @@ def enter_user_name():
     userName_box.grid(row=1,column=0)
     my_button2=Button(root,text="done",command=enter_input_username)
     my_button2.grid(row=6,column=0)
+    return userName
 
 def is_clicked():
     if enter_button or send_button :
@@ -259,12 +293,22 @@ def is_clicked():
 # main_menu()
 def send_request():
     try:
-        message = "|".join([request_type,sub_menue_choise,msg]) 
-        client.send(message) 
-        b=client.recv()
-        print(" the client list  is " , b)
+        global  request_type, sub_menue_choise,msg,userName
+        if request_type =="" or sub_menue_choise==""or msg=="" or userName=="":
+            print (" one of vlaue request is empty" , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
+            main_menu()
+            return "no request sent"
+       
+            
+        # message = "|".join([request_type,sub_menue_choise,msg]) 
+        # print(" the rquest is",message)
+        print ("  all vlaues are good " , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
+        client.send_username_request(userName,request_type,sub_menue_choise,msg)
+        titels=client.recv()
+        print ("  all vlaues are good " , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
+        print(" the client list  is " , titels)
 
-        return b
+        return titels
     except Exception as e:
         print(f"Error in send_request: {e}")
         main_menu()
@@ -272,9 +316,16 @@ def send_request():
 
 def send_username(vlaue):
     try:
+        if not vlaue:
+            print("Error: Username not set.")
+            return
         client.send(vlaue)
+        global userName_is_sent
+        userName_is_sent=True
+        print("user name is sent ")
     except Exception as e :
         print(" error at sending user name ")
+        main_menu()
 def recv_full_data():
     try:
         data=client.recv(1024).decode("ascii")
