@@ -109,12 +109,12 @@ def search_for_catogry_headlines() :
     clear()
     global request_type,sub_menue_choise
     request_type="headlines"
-    sub_menue_choise="by_catogry"
+    sub_menue_choise="by_category"
     m=StringVar()
     Radiobutton(root,text="business",variable=m,value="business_news").grid(row=0,column=0)
-    Radiobutton(root,text="genral",variable=m,value="genral_news").grid(row=1,column=0)
+    Radiobutton(root,text="genral",variable=m,value="general_news").grid(row=1,column=0)
     Radiobutton(root,text="health",variable=m,value="health_news").grid(row=2,column=0)
-    Radiobutton(root,text="seince",variable=m,value="seince_news").grid(row=3,column=0)
+    Radiobutton(root,text="seince",variable=m,value="science_news").grid(row=3,column=0)
     Radiobutton(root,text="sport",variable=m,value="sport_news").grid(row=4,column=0)
     Radiobutton(root,text="technology",variable=m,value="technology_news").grid(row=5,column=0)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
@@ -161,12 +161,12 @@ def search_for_catogry_sourc() :
     clear()
     global request_type,sub_menue_choise
     request_type="sources"
-    sub_menue_choise="by_catogry"
+    sub_menue_choise="by_category"
     m=StringVar()
     Radiobutton(root,text="business",variable=m,value="business_sources").grid(row=0,column=0)
-    Radiobutton(root,text="genral",variable=m,value="genral_sources").grid(row=1,column=0)
+    Radiobutton(root,text="genral",variable=m,value="general_sources").grid(row=1,column=0)
     Radiobutton(root,text="health",variable=m,value="health_sources").grid(row=2,column=0)
-    Radiobutton(root,text="seince",variable=m,value="seince_sources").grid(row=3,column=0)
+    Radiobutton(root,text="seince",variable=m,value="science_sources").grid(row=3,column=0)
     Radiobutton(root,text="sport",variable=m,value="sport_sources").grid(row=4,column=0)
     Radiobutton(root,text="technology",variable=m,value="technology_sources").grid(row=5,column=0)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
@@ -338,7 +338,7 @@ def recv_choices(list):
     n=len(list)
     for i in range(0,n):
         k=list[i]
-        Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
+        Radiobutton(root,text=k,variable=m,value=k).grid(row=c,column=0)
         c=c+1
     client.send(m.get())
 enter_user_name()
