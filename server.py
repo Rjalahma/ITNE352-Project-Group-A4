@@ -38,18 +38,16 @@ def handle_client(sock, clientID):
 
     while True:
         try:
-            if user_name=="" :
-                user_name=sock.recv(2048).decode()
-                print("this user is",user_name)
 
             data = sock.recv(2084).decode()  # Receive data from client
             values = data.split("|")
             print("This is the server values:", values)
-            request, subRequest, dataRequested = values
+            user_name,request, subRequest, dataRequested = values
 
             print("Requested service type is:", request)
             print("Requested sub is:", subRequest)
             print("Requested data is:", dataRequested)
+            choice=sock.recv(2048).decode()
 
         except Exception as e:
             print("Error receiving data: ", e)
