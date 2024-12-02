@@ -7,10 +7,17 @@ from newsapi import NewsApiClient
 apikey = "d07953f1256b41a6a39f2429c02f0d0e"
 newsapi = NewsApiClient(api_key=apikey)
 
+def save_to_json(client_name, option, group_id, data):
+    file_name=f"{client_name}_{option}_{group_id}.json"
+    with open (file_name,'w') as f :
+        json.dump(data, f , indent=4)
+    print("data saved to :", file_name)
+
 def get_headlines(params):
     try:
         response = newsapi.get_top_headlines(**params)  # Call the API with params
         return response 
+        print(response)# for testing 
     except Exception as e:
         print("Error fetching headlines: ", e)
         #return None
@@ -19,6 +26,7 @@ def get_sources(params):
     try:
         response = newsapi.get_sources(**params)  # Call the API with params
         return response  
+        print(response)# for testing
     except Exception as e:
         print("Error fetching sources:", e)
         
@@ -33,7 +41,7 @@ def handle_client(sock, clientID):
             if user_name=="" :
                 user_name=sock.recv(2048).decode()
                 print("this user is",user_name)
-                
+
             data = sock.recv(2084).decode()  # Receive data from client
             values = data.split("|")
             print("This is the server values:", values)
@@ -97,22 +105,27 @@ def handle_client(sock, clientID):
                     pass
                 else:
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
-                    continue
-
-            except Exception as e:
-                print("Error handling headlines subrequests", e)   
+                    continue   
 
             # Extracting the headlines 
-            results = get_headlines(params)
-            if results:
-                titles = []
-                articles = results.get('articles', [])
-                for article in articles:
-                    if article.get('title'):
-                        titles.append(article['title'])
-                titles_str = "\n".join(titles)  # Join all titles into a string 
-            else:
-                titles_str = "No results found."
+                results = get_headlines(params) # calling the method 
+                if results:
+                    titles = []
+                    articles = results.get('articles', [])
+                    for article in articles:
+                        #url = article.get('url')
+                        title= article.get('title')
+                        titles.append({"title":title}) # Add the title to the titles list
+                    save_to_json(user_name, "headlines", "A4", titles)  # save to JSON file (calling the method)
+                    titles_str =" "
+                    for title in titles:
+                        titles_str+= title["title"]+"\n"
+                    titles_str = "\n".join([article["title"] for article in titles])
+                else:
+                    titles_str = "No results found."
+
+            except Exception as e:
+                print("Error handling headlines subrequests", e)
 
             # Send the titles
             sock.sendall(titles_str.encode('ascii'))
@@ -170,16 +183,19 @@ def handle_client(sock, clientID):
                 # Sending the results 
                 results = get_sources(params)
                 if results:
-                    sources = []
-                    articles = results.get('sources', [])
-                    for source in articles:
-                        if source.get('name'):
-                            sources.append(source['name'])
-                    sources_str = "\n".join(sources)
+                    sources=[]
+                    sources_list = results.get('sources', [])
+                    for source in sources_list:
+                        name = source.get('name')
+                        sources.append({"name": name})
+
+                    save_to_json(user_name, "sources","A4", sources)  # Save to JSON file
+                    sources_str = ""
+                    for source in sources:
+                        sources_str += source["name"] + "\n"
+
                 else:
-                    sources_str = "No results found."
-
-
+                    sources_str = "No results found"
             
             except Exception as e:
                 print("Error processing sources request: ", e)
@@ -195,7 +211,7 @@ def handle_server():
     print("The server is running")
     ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssocket.bind(("127.0.0.1", 49999))
-    ssocket.listen(5)
+    ssocket.listen(3)
     print("The server is now waiting for client")
     while True:
         sock, clientID = ssocket.accept()
