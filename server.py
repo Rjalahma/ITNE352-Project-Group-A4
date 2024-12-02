@@ -1,6 +1,5 @@
 import socket
 import threading
-import requests
 import json
 from newsapi import NewsApiClient
 
@@ -9,24 +8,29 @@ newsapi = NewsApiClient(api_key=apikey)
 
 def save_to_json(client_name, option, group_id, data):
     file_name=f"{client_name}_{option}_{group_id}.json"
+    print("file created")
     with open (file_name,'w') as f :
         json.dump(data, f , indent=4)
     print("data saved to :", file_name)
 
 def get_headlines(params):
     try:
+        print("the headlines request is processing ")
         response = newsapi.get_top_headlines(**params)  # Call the API with params
-        return response 
+        print("the headline response is saved")
         print(response)# for testing 
+        return response 
     except Exception as e:
         print("Error fetching headlines: ", e)
         #return None
 
 def get_sources(params):
     try:
+        print("the sources request is processing ")
         response = newsapi.get_sources(**params)  # Call the API with params
-        return response  
+        print("the sources response is saved")
         print(response)# for testing
+        return response  
     except Exception as e:
         print("Error fetching sources:", e)
         
@@ -47,7 +51,7 @@ def handle_client(sock, clientID):
             print("Requested service type is:", request)
             print("Requested sub is:", subRequest)
             print("Requested data is:", dataRequested)
-            choice=sock.recv(2048).decode()
+            #choice=sock.recv(2048).decode()
 
         except Exception as e:
             print("Error receiving data: ", e)
@@ -60,7 +64,7 @@ def handle_client(sock, clientID):
             break
 
         elif request == "headlines": 
-            params = { "apiKey": apikey, "pageSize": 15 }
+            params = { "page_size": 15 }
             try:
                 # Searching by a keyword 
                 if subRequest == "key-word": 
@@ -126,11 +130,16 @@ def handle_client(sock, clientID):
             except Exception as e:
                 print("Error handling headlines subrequests", e)
 
-            # Send the titles
-            sock.sendall(titles_str.encode('ascii'))
+            try:
+                # Send the titles
+                sock.sendall(titles_str.encode('utf-8'))
+            except Exception as e :
+                sock.sendall(b"error sending the titles")
+                print("error sending the titles ", e)
+            
 
         elif request == "sources":
-            params = { "apiKey": apikey, "pageSize": 15 }
+            params = { "page_size": 15 }
             try: 
                 if subRequest == "by_category":
                     categories = {
@@ -199,8 +208,11 @@ def handle_client(sock, clientID):
             except Exception as e:
                 print("Error processing sources request: ", e)
 
-            # Sending the sources
-            sock.sendall(sources_str.encode('ascii'))
+            try:
+                # Sending the sources
+                sock.sendall(sources_str.encode('ascii'))
+            except Exception as e :
+                print("error sending sources",e)
 
         # Close the socket after sending response
         sock.close()

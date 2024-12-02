@@ -45,7 +45,7 @@ def send_username_request(username,request_type,sub_menue_choise,msg):
 def recv():
     try :
 
-        data = clinet_sock.recv(1024).decode("ascii")
+        data = clinet_sock.recv(1024).decode('utf-8')
         return data
     except Exception as e:
         print("Error in reciving:", e)
