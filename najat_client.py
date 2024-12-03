@@ -2,8 +2,11 @@ import socket
 server_add=("127.0.0.1",49999)
 # clinet_sock=None
 username_sent=False
+# changed 
 clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clinet_sock.connect(("127.0.0.1",49999))
+
+
 # def client_connaction():
 #     global clinet_sock
 #     try :
