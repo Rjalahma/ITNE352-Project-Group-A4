@@ -76,7 +76,6 @@ def view_data(value):
         #     Error_labale.grid(row=0,column=0)
         #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
             
-        print(" full data is recived ")
         Button(root,text=" send your choice ",command=lambda:send_choice(m.get())).grid(row=c+1,column=0)
         # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)
         Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)

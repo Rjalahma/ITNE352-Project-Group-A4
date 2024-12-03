@@ -117,6 +117,7 @@ def handle_client(sock, clientID):
                 if results:
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
                     articles = dataFromApi.get('articles', [])
+                    articles=dataFromApi["articles"]
                     titles = []
                     for article in articles:
                         title= article.get('title')
@@ -147,29 +148,36 @@ def handle_client(sock, clientID):
 
             # extracting data based on the chosen title
             try:
-                 for article in articles:
-                            if article.get('title') == chosen_title:
-                                content=article.get('content')
-                                description=article.get('description')
-                                author=article.get('author')
-                                url=article.get('url')
-                                date=article.get('publishedAt')
+                #  for title in titles:
+                #             if title==chosen_title:
+                            for article in articles:
+                                article_title=article.get('title')
+                                print("tese are the article titles:",article_title)
+                                if article.get('title') == chosen_title:
+                                    content=article.get('content')
+                                    description=article.get('description')
+                                    author=article.get('author')
+                                    url=article.get('url')
+                                    date=article.get('publishedAt')
 
-                                article_details= (  "Title: " + chosen_title + "\n" +
-                                                    "Content: " + content + "\n" +
-                                                    "Description: " + description + "\n" +
-                                                    "Author: " + author + "\n" +
-                                                    "URL: " + url + "\n" +
-                                                    "Date: " + date + "\n" )
-                                print(" article details:" ,article_details)
-                                sock.sendall(article_details.encode('utf-8'))
+                                    article_details= (  "Title: " + chosen_title + "\n" +
+                                                        "Content: " + content + "\n" +
+                                                        "Description: " + description + "\n" +
+                                                        "Author: " + author + "\n" +
+                                                        "URL: " + url + "\n" +
+                                                        "Date: " + date + "\n" )
+                                    print(" article details:" ,article_details)
+                                    sock.sendall(article_details.encode('utf-8'))
+                                    print("-"*30)
+                                    print("the articles details are sent ")
+                                    break
                                 # do i add break here or no?????????
                             else:
                                 print("the title chosen is not in the titles list")
-                                sock.sendall(b"the title chosen is not in the titles list")
+                                #sock.sendall(b"the title chosen is not in the titles list")
                                 break
             except Exception as e:
-                print("error at extracting headline data ")
+                print("error at extracting headline data ", e)
                 sock.sendall(b"server has an error with extracting the data ")
 
         elif request == "sources":
@@ -282,8 +290,9 @@ def handle_client(sock, clientID):
                 print("error at extracting source data ")
                 sock.sendall(b"server has an error with extracting the data ")
 
+        
         # Close the socket after sending response
-        sock.close()
+    sock.close()
 
 def handle_server():
     print(30 * "-")
