@@ -119,21 +119,25 @@ def handle_client(sock, clientID):
                 results = get_headlines(params) # calling the function  
                 if results:
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
-                    articles = dataFromApi.get('articles', [])
+                    articles = dataFromApi.get('articles',  [])
                     titles = []
                     print("")
                     print("the titles of all the articles:")
-                    for article in articles:
-                        title= article.get('title')
-                        print(" title :",title)
-                        titles.append({"title":title}) # Add the title to the titles list
-                    print("")
-                    titles_str =" "
-                    for title in titles:
-                        titles_str+= title["title"]+"\n"
-                    #print("the titles of all the articles:"+"\n"+titles_str)
+                    if not articles:  # Check if articles list is empty
+                        print("No articles available")
+                        sock.sendall(b"No articles available")  
+                        break
+                    else:
+                        for article in articles:
+                            title= article.get('title')
+                            print(" title :",title)
+                            titles.append({"title":title}) # Add the title to the titles list
+                        print("")
+                        titles_str =" "
+                        for title in titles:
+                            titles_str+= title["title"]+"\n"
                 else:
-                    titles_str = "No results found."
+                        titles_str = "No results found."
 
             except Exception as e:
                 print("Error handling headlines subrequests", e)
@@ -151,23 +155,21 @@ def handle_client(sock, clientID):
             print("")
             print("the chosen title is received :", chosen_title)
             print("")
-            print("now the detials about the title will be collected")
+            print("now the details about the title will be collected")
             print("")
 
             # extracting data based on the chosen title
             try:
                 for article in articles:
-                    #article_title=article.get('title')
-                    #print("these are the article titles:",article_title)
-                    #print(30 * "-")
-                    if article.get('title') == chosen_title:
-                        content=article.get('content','no content provided')
-                        description=article.get('description','no description provided')
-                        author=article.get('author','no author provided')
-                        url=article.get('url','no url provided')
-                        date=article.get('publishedAt', 'no time provided' )
+                    if article.get('title') == chosen_title.strip():
+                        content=str(article.get('content','no content provided'))
+                        description=str(article.get('description','no description provided'))
+                        author=str(article.get('author','no author provided'))
+                        url=str(article.get('url','no url provided'))
+                        date=str(article.get('publishedAt', 'no time provided' ))
 
-                        article_details= (  "Title: " + chosen_title + "\n" +
+                        article_details= (  "\n" +
+                                            "Title: " + chosen_title + "\n" +
                                             "Content: " + content + "\n" +
                                             "Description: " + description + "\n" +
                                             "Author: " + author + "\n" +
@@ -246,19 +248,23 @@ def handle_client(sock, clientID):
                     names = []
                     print("")
                     print("the names of all the sources:")
-                    count=0
-                    for source in sources:
-                        if count > 15: # to limit the names to 15 
-                            break
-                        name = source.get('name')
-                        print("name:",name)
-                        names.append({"name": name})
-                        count=count+1
-                    print("")
-                    names_str = ""
-                    for name in names:
-                        names_str += name["name"] + "\n"
-                    #print("the sources names are:"+"\n"+names_str)
+                    if not sources:
+                        print("No sources available")
+                        sock.sendall(b"No cources available")
+                        break
+                    else:
+                        count=0
+                        for source in sources:
+                            if count >= 15: # to limit the names to 15 
+                                break
+                            name = source.get('name')
+                            print("name:",name)
+                            names.append({"name": name})
+                            count += 1
+                        print("")
+                        names_str = ""
+                        for name in names:
+                            names_str += name["name"] + "\n"
                 else:
                     names_str = "No results found"
             
@@ -275,29 +281,35 @@ def handle_client(sock, clientID):
 
             # receiving the name chosen from the client
             chosen_name=sock.recv(2048).decode('utf-8')
+            print("")
             print("the chosen name of source is received :", chosen_name)
+            print("")
+            print("now the details about the title will be collected")
+            print("")
 
             # extracting data based on the chosen name 
             try:
                 for source in sources:
                     if source.get('name')==chosen_name:
-                        id=source.get('id', 'no id provided')
-                        sdescription=source.get('description','no description provided')
-                        surl=source.get('url','no url provided')
-                        scategory=source.get('category','no category provided')
-                        slanguage=source.get('language','no language provided')
-                        scountry=source.get('country','no country provided')
+                        id=str(source.get('id', 'no id provided'))
+                        sdescription=str(source.get('description','no description provided'))
+                        surl=str(source.get('url','no url provided'))
+                        scategory=str(source.get('category','no category provided'))
+                        slanguage=str(source.get('language','no language provided'))
+                        scountry=str(source.get('country','no country provided'))
 
-                        source_details=("name of source: " + chosen_name + "\n" +
+                        source_details=(    "\n" +
+                                            "name of source: " + chosen_name + "\n" +
                                             "id: " + id + "\n" +
                                             "Description: " + sdescription + "\n" +
                                             "category: " + scategory + "\n" +
                                             "URL: " + surl + "\n" +
-                                            "language: " + slanguage + "\n"
+                                            "language: " + slanguage + "\n"+
                                             "country: " + scountry + "\n" )
+                        print("")
                         print(" source details:" ,source_details)
                         sock.sendall(source_details.encode('utf-8'))
-                        print("-"*30)
+                        print("")
                         print("the articles details are sent ")
                         break
                 else:
