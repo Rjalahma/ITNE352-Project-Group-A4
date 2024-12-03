@@ -19,7 +19,9 @@ clinet_sock.connect(("127.0.0.1",49999))
 #         print(" error at esablishing the connaction")
 def send_choice(message):
     try:
+        print(f"Sending choice to server: {message}")
         clinet_sock.send(message.encode('utf-8'))
+
         # print(" inside send client ")
         # clinet_sock.send(request_type.encode("ascii"))
         # print("")
@@ -46,6 +48,13 @@ def send_username_request(username,request_type,sub_menue_choise,msg):
     except Exception as e:
         print("  error at sending username and request from najat client ")
 def recv():
+    try :
+
+        data = clinet_sock.recv(1024).decode('utf-8')
+        return data
+    except Exception as e:
+        print("Error in reciving:", e)
+def recv_choice():
     try :
 
         data = clinet_sock.recv(1024).decode('utf-8')
