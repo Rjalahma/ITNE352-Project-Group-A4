@@ -120,6 +120,7 @@ def handle_client(sock, clientID):
                     titles = []
                     for article in articles:
                         title= article.get('title')
+                        print(" title :",title)
                         titles.append({"title":title}) # Add the title to the titles list
                     
                     titles_str =" "
@@ -166,6 +167,7 @@ def handle_client(sock, clientID):
                             else:
                                 print("the title chosen is not in the titles list")
                                 sock.sendall(b"the title chosen is not in the titles list")
+                                break
             except Exception as e:
                 print("error at extracting headline data ")
                 sock.sendall(b"server has an error with extracting the data ")

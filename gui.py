@@ -26,6 +26,18 @@ def view_full_data(value):
         clear()
         Label(root,text=str(data)).grid(row=0, column=0,columnspan=5)
         Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+def send_choice(value):
+    choice=value
+    clear()
+    client.send_choice(choice)
+    print(" choice is sent ")
+    full_data=recv_full_data()
+    Label(root,text="your choice is sent ").grid(row=0,column=0)
+    if full_data =="":
+        Error=Label(" error at sending the title")
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
+    Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=1,column=0)
+    Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
 def view_data(value):
     w=value
     clear()
@@ -39,7 +51,8 @@ def view_data(value):
     m=StringVar()
     
     # n=len(list)
-    my_list=w.split("-")
+    # my_list=w.split("-")
+    my_list=w.split("\n")
     n=len(my_list)
     # the_list=list(value.split("|"))
     print("="*25)
@@ -53,10 +66,10 @@ def view_data(value):
             k=my_list[i]
             Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
             c=c+1
-        client.send_choice(m.get())
+        # client.send_choice(m.get())
         
-        print(" choice is sent ")
-        full_data=recv_full_data()
+        # print(" choice is sent ")
+        # full_data=recv_full_data()
         # if not full_data:
         #     clear()
         #     Error_labale=Label(root,text=" error at reciving full data")
@@ -64,8 +77,9 @@ def view_data(value):
         #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
             
         print(" full data is recived ")
-        Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+1,column=0)
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+2, column=0)
+        Button(root,text=" send your choice ",command=lambda:send_choice(m.get())).grid(row=c+1,column=0)
+        # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)
+        Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
         # Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+2, column=0)
 # def submit(value):
 #     global userName
@@ -355,7 +369,7 @@ def send_request():
 #         main_menu()
 def recv_full_data():
     try:
-        data=client.recv(1024).decode("ascii")
+        data=client.recv(1024).decode('utf-8')
         return data
     except Exception as e :
         print(" error at reciving full data")

@@ -19,7 +19,7 @@ clinet_sock.connect(("127.0.0.1",49999))
 #         print(" error at esablishing the connaction")
 def send_choice(message):
     try:
-        clinet_sock.send(message.encode("ascii"))
+        clinet_sock.send(message.encode('utf-8'))
         # print(" inside send client ")
         # clinet_sock.send(request_type.encode("ascii"))
         # print("")
