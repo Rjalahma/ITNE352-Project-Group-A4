@@ -11,11 +11,7 @@ def save_to_json(client_name, option, group_id, data):
     print("file created")
     with open (file_name,'w') as f :
         json.dump(data, f , indent=4)
-        print("data saved to :", file_name)
-        #data=json.load(f)
-        return data 
-    print("file data loaded in object data")
-
+    print("data saved to :", file_name)
 
 def get_headlines(params):
     try:
@@ -33,10 +29,10 @@ def get_headlines(params):
 def get_sources(params):
     try:
         print("the sources request is processing ")
-        APIresponse = newsapi.get_sources(**params)  # Call the API with params
+        response = newsapi.get_sources(**params)  # Call the API with params
         print("the sources response is saved")
-        print(APIresponse)# for testing
-        return APIresponse 
+        print(response)# for testing
+        return response  
     except Exception as e:
         print("Error fetching sources:", e)
         
@@ -49,8 +45,8 @@ def handle_client(sock, clientID):
     while True:
         try:
 
-            dataFromClient= sock.recv(2084).decode()  # Receive data from client
-            values = dataFromClient.split("|")
+            data = sock.recv(2084).decode()  # Receive data from client
+            values = data.split("|")
             print("This is the server values:", values)
             user_name,request, subRequest, dataRequested = values
 
@@ -115,8 +111,8 @@ def handle_client(sock, clientID):
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
                     continue   
 
-            # Extracting the headlines from the api 
-                results = get_headlines(params) # calling the function  
+            # Extracting the headlines 
+                results = get_headlines(params) # calling the method 
                 if results:
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
                     articles = dataFromApi.get('articles',  [])
@@ -143,9 +139,8 @@ def handle_client(sock, clientID):
                 print("Error handling headlines subrequests", e)
 
             try:
-                # Sending the titles to the client to choose from 
+                # Send the titles
                 sock.sendall(titles_str.encode('utf-8'))
-                print("titles are sent")
             except Exception as e :
                 sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
@@ -236,11 +231,10 @@ def handle_client(sock, clientID):
                 elif subRequest == "list_all":
                     pass
                 else:
-                    print("invalid subrequest type")
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
                     continue
 
-                # Extracting the sources from the api  
+                # Sending the results 
                 results = get_sources(params)
                 if results:
                     dataFromApi =save_to_json(user_name, "sources", "A4", results)  # save to JSON file (calling the method)
@@ -266,17 +260,15 @@ def handle_client(sock, clientID):
                         for name in names:
                             names_str += name["name"] + "\n"
                 else:
-                    names_str = "No results found"
+                    sources_str = "No results found"
             
             except Exception as e:
                 print("Error processing sources request: ", e)
 
             try:
-                # Sending the sources to the client to choose from 
-                sock.sendall(names_str.encode('utf-8'))
-                print("names of sources are sent")
+                # Sending the sources
+                sock.sendall(sources_str.encode('ascii'))
             except Exception as e :
-                sock.sendall(b"error sending the names of sources")
                 print("error sending sources",e)
 
             # receiving the name chosen from the client
@@ -322,7 +314,7 @@ def handle_client(sock, clientID):
 
         
         # Close the socket after sending response
-    sock.close()
+        sock.close()
 
 def handle_server():
     print(30 * "-")
