@@ -13,37 +13,43 @@ userName_is_sent=False
 global userName
 userName=""
 request_counter=0
+choice=""
 def clear():
       for widget in root.grid_slaves():
         widget.destroy()
 def view_full_data(value):
     data=value
-    if len(data)==0:
-        clear()
-        Error_labale=Label(root,text=" error at reciving the data ").grid(row=0, column=0)
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
-    else:
-        clear()
-        Label(root,text=str(data)).grid(row=0, column=0,columnspan=5)
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+    # if len(data)==0:
+    #     clear()
+    #     Error_labale=Label(root,text=" error at reciving the data ").grid(row=0, column=0)
+    #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+    # else:
+    clear()
+    Label(root,text=str(data)).grid(row=0, column=0,columnspan=5)
+    Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
 def send_choice(value):
+    global choice
     choice=value
     clear()
-    client.send_choice(choice)
+    # client.send_choice(choice)
+    not_full_data=client.recv_choice()
+    full_data=send_gui_choice()
     print(" choice is sent ")
-    full_data=recv_full_data()
+    
+    print("*"*77)
+    print(" this is the full data ", full_data)
     Label(root,text="your choice is sent ").grid(row=0,column=0)
-    if full_data =="":
-        Error=Label(" error at sending the title")
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
-    Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=1,column=0)
+    # if full_data =="":
+    #     Error=Label(" error at sending the title")
+    #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
+    Button(root,text=" view full data", command=lambda:view_full_data(full_data) ).grid(row=1,column=0)
     Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
 def view_data(value):
     w=value
     clear()
     if not w:
         Error_labale=Label(root,text=" error at reciving the titles ").grid(row=0, column=0)
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+        # Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
         return
     Label(root, text=" choose from those titles ").grid(row=0, column=0)
     print(" choose from ",w)
@@ -76,7 +82,7 @@ def view_data(value):
         #     Error_labale.grid(row=0,column=0)
         #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
             
-        Button(root,text=" send your choice ",command=lambda:send_choice(m.get())).grid(row=c+1,column=0)
+        Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip())).grid(row=c+1,column=0)
         # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)
         Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
         # Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+2, column=0)
@@ -354,6 +360,14 @@ def send_request():
         # main_menu()
         return "Error", "No response"
 
+def send_gui_choice() :
+    global choice
+    if choice=="":
+        print(" choice is empty")
+    else:
+        client.send_choice(choice)
+        full_data=client.recv()
+        return full_data
 # def send_username(vlaue):
 #     try:
 #         if not vlaue:
@@ -368,7 +382,7 @@ def send_request():
 #         main_menu()
 def recv_full_data():
     try:
-        data=client.recv(1024).decode('utf-8')
+        data=client.recv()
         return data
     except Exception as e :
         print(" error at reciving full data")
