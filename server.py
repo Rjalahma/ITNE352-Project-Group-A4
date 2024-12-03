@@ -16,10 +16,12 @@ def save_to_json(client_name, option, group_id, data):
 def get_headlines(params):
     try:
         print("the headlines request is processing ")
-        response = newsapi.get_top_headlines(**params)  # Call the API with params
+        print("")
+        APIresponse = newsapi.get_top_headlines(**params)  # Call the API with params
         print("the headline response is saved")
-        print(response)# for testing 
-        return response 
+        print("")
+        #print("this is the response from api:",APIresponse)# for testing 
+        return APIresponse 
     except Exception as e:
         print("Error fetching headlines: ", e)
         #return None
@@ -51,7 +53,7 @@ def handle_client(sock, clientID):
             print("Requested service type is:", request)
             print("Requested sub is:", subRequest)
             print("Requested data is:", dataRequested)
-            #choice=sock.recv(2048).decode()
+            print("")
 
         except Exception as e:
             print("Error receiving data: ", e)
@@ -112,18 +114,20 @@ def handle_client(sock, clientID):
             # Extracting the headlines 
                 results = get_headlines(params) # calling the method 
                 if results:
+                    dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
+                    articles = dataFromApi.get('articles', [])
                     titles = []
-                    articles = results.get('articles', [])
+                    print("")
+                    print("the titles of all the articles:")
                     for article in articles:
                         #url = article.get('url')
                         title= article.get('title')
                         titles.append({"title":title}) # Add the title to the titles list
-                    save_to_json(user_name, "headlines", "A4", titles)  # save to JSON file (calling the method)
+                    print("")
                     titles_str =" "
                     for title in titles:
                         titles_str+= title["title"]+"\n"
-                    titles_str = "\n".join([article["title"] for article in titles])
-                    print("the titles are:",titles_str)
+                    #print("the titles of all the articles:"+"\n"+titles_str)
                 else:
                     titles_str = "No results found."
 
@@ -136,10 +140,50 @@ def handle_client(sock, clientID):
             except Exception as e :
                 sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
-            
+
+            # receiving the title chosen from the client  
+            chosen_title=sock.recv(2048).decode('utf-8')
+            print("")
+            print("the chosen title is received :", chosen_title)
+            print("")
+            print("now the detials about the title will be collected")
+            print("")
+
+            # extracting data based on the chosen title
+            try:
+                for article in articles:
+                    #article_title=article.get('title')
+                    #print("these are the article titles:",article_title)
+                    #print(30 * "-")
+                    if article.get('title') == chosen_title:
+                        content=article.get('content','no content provided')
+                        description=article.get('description','no description provided')
+                        author=article.get('author','no author provided')
+                        url=article.get('url','no url provided')
+                        date=article.get('publishedAt', 'no time provided' )
+
+                        article_details= (  "Title: " + chosen_title + "\n" +
+                                            "Content: " + content + "\n" +
+                                            "Description: " + description + "\n" +
+                                            "Author: " + author + "\n" +
+                                            "URL: " + url + "\n" +
+                                            "Date: " + date + "\n" )
+                        print("")
+                        print(" article details:" ,article_details)
+                        sock.sendall(article_details.encode('utf-8'))
+                        print("")
+                        print("the articles details are sent ")
+                        break
+                else:
+                    print("the title chosen is not in the titles list")
+                    sock.sendall(b"the title chosen is not in the titles list")
+                    break
+            except Exception as e:
+                print("error at extracting headline data ", e)
+                sock.sendall(b"server has an error with extracting the data ")
 
         elif request == "sources":
-            params = { "page_size": 15 }
+            params = {  }
             try: 
                 if subRequest == "by_category":
                     categories = {
@@ -191,17 +235,24 @@ def handle_client(sock, clientID):
                 # Sending the results 
                 results = get_sources(params)
                 if results:
-                    sources=[]
-                    sources_list = results.get('sources', [])
-                    for source in sources_list:
-                        name = source.get('name')
-                        sources.append({"name": name})
-
-                    save_to_json(user_name, "sources","A4", sources)  # Save to JSON file
-                    sources_str = ""
+                    dataFromApi =save_to_json(user_name, "sources", "A4", results)  # save to JSON file (calling the method)
+                    sources = dataFromApi.get('sources', [])
+                    names = []
+                    print("")
+                    print("the names of all the sources:")
+                    count=0
                     for source in sources:
-                        sources_str += source["name"] + "\n"
-                    print("the sources:",sources_str)
+                        if count > 15: # to limit the names to 15 
+                            break
+                        name = source.get('name')
+                        print("name:",name)
+                        names.append({"name": name})
+                        count=count+1
+                    print("")
+                    names_str = ""
+                    for name in names:
+                        names_str += name["name"] + "\n"
+                    #print("the sources names are:"+"\n"+names_str)
                 else:
                     sources_str = "No results found"
             
@@ -214,6 +265,42 @@ def handle_client(sock, clientID):
             except Exception as e :
                 print("error sending sources",e)
 
+            # receiving the name chosen from the client
+            chosen_name=sock.recv(2048).decode('utf-8')
+            print("the chosen name of source is received :", chosen_name)
+
+            # extracting data based on the chosen name 
+            try:
+                for source in sources:
+                    if source.get('name')==chosen_name:
+                        id=source.get('id', 'no id provided')
+                        sdescription=source.get('description','no description provided')
+                        surl=source.get('url','no url provided')
+                        scategory=source.get('category','no category provided')
+                        slanguage=source.get('language','no language provided')
+                        scountry=source.get('country','no country provided')
+
+                        source_details=("name of source: " + chosen_name + "\n" +
+                                            "id: " + id + "\n" +
+                                            "Description: " + sdescription + "\n" +
+                                            "category: " + scategory + "\n" +
+                                            "URL: " + surl + "\n" +
+                                            "language: " + slanguage + "\n"
+                                            "country: " + scountry + "\n" )
+                        print(" source details:" ,source_details)
+                        sock.sendall(source_details.encode('utf-8'))
+                        print("-"*30)
+                        print("the articles details are sent ")
+                        break
+                else:
+                    print("the name of source chosen is not in the names list")
+                    sock.sendall(b"the name of sourcee chosen is not in the names list")
+                    break
+            except Exception as e:
+                print("error at extracting source data ")
+                sock.sendall(b"server has an error with extracting the data ")
+
+        
         # Close the socket after sending response
         sock.close()
 
