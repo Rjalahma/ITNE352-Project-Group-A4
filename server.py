@@ -11,15 +11,19 @@ def save_to_json(client_name, option, group_id, data):
     print("file created")
     with open (file_name,'w') as f :
         json.dump(data, f , indent=4)
-    print("data saved to :", file_name)
+        print("data saved to :", file_name)
+        #data=json.load(f)
+        return data 
+    print("file data loaded in object data")
+
 
 def get_headlines(params):
     try:
         print("the headlines request is processing ")
-        response = newsapi.get_top_headlines(**params)  # Call the API with params
+        APIresponse = newsapi.get_top_headlines(**params)  # Call the API with params
         print("the headline response is saved")
-        print(response)# for testing 
-        return response 
+        print("this is the respinse from api:",APIresponse)# for testing 
+        return APIresponse 
     except Exception as e:
         print("Error fetching headlines: ", e)
         #return None
@@ -27,10 +31,10 @@ def get_headlines(params):
 def get_sources(params):
     try:
         print("the sources request is processing ")
-        response = newsapi.get_sources(**params)  # Call the API with params
+        APIresponse = newsapi.get_sources(**params)  # Call the API with params
         print("the sources response is saved")
-        print(response)# for testing
-        return response  
+        print(APIresponse)# for testing
+        return APIresponse 
     except Exception as e:
         print("Error fetching sources:", e)
         
@@ -43,15 +47,14 @@ def handle_client(sock, clientID):
     while True:
         try:
 
-            data = sock.recv(2084).decode()  # Receive data from client
-            values = data.split("|")
+            dataFromClient= sock.recv(2084).decode()  # Receive data from client
+            values = dataFromClient.split("|")
             print("This is the server values:", values)
             user_name,request, subRequest, dataRequested = values
 
             print("Requested service type is:", request)
             print("Requested sub is:", subRequest)
             print("Requested data is:", dataRequested)
-            #choice=sock.recv(2048).decode()
 
         except Exception as e:
             print("Error receiving data: ", e)
@@ -109,20 +112,19 @@ def handle_client(sock, clientID):
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
                     continue   
 
-            # Extracting the headlines 
-                results = get_headlines(params) # calling the method 
+            # Extracting the headlines from the api 
+                results = get_headlines(params) # calling the function  
                 if results:
+                    dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
+                    articles = dataFromApi.get('articles', [])
                     titles = []
-                    articles = results.get('articles', [])
                     for article in articles:
-                        #url = article.get('url')
                         title= article.get('title')
                         titles.append({"title":title}) # Add the title to the titles list
-                    save_to_json(user_name, "headlines", "A4", titles)  # save to JSON file (calling the method)
+                    
                     titles_str =" "
                     for title in titles:
                         titles_str+= title["title"]+"\n"
-                    titles_str = "\n".join([article["title"] for article in titles])
                     print("the titles are:",titles_str)
                 else:
                     titles_str = "No results found."
@@ -131,12 +133,42 @@ def handle_client(sock, clientID):
                 print("Error handling headlines subrequests", e)
 
             try:
-                # Send the titles
+                # Sending the titles to the client to choose from 
                 sock.sendall(titles_str.encode('utf-8'))
+                print("titles are sent")
             except Exception as e :
                 sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
-            
+
+            # receiving the title chosen from the client  
+            chosen_title=sock.recv(2048).decode('utf-8')
+            print("the chosen title is received :", chosen_title)
+
+            # extracting data based on the chosen title
+            try:
+                 for article in articles:
+                            if article.get('title') == chosen_title:
+                                content=article.get('content')
+                                description=article.get('description')
+                                author=article.get('author')
+                                url=article.get('url')
+                                date=article.get('publishedAt')
+
+                                article_details= (  "Title: " + chosen_title + "\n" +
+                                                    "Content: " + content + "\n" +
+                                                    "Description: " + description + "\n" +
+                                                    "Author: " + author + "\n" +
+                                                    "URL: " + url + "\n" +
+                                                    "Date: " + date + "\n" )
+                                print(" article details:" ,article_details)
+                                sock.sendall(article_details.encode('utf-8'))
+                                # do i add break here or no?????????
+                            else:
+                                print("the title chosen is not in the titles list")
+                                sock.sendall(b"the title chosen is not in the titles list")
+            except Exception as e:
+                print("error at extracting headline data ")
+                sock.sendall(b"server has an error with extracting the data ")
 
         elif request == "sources":
             params = { "page_size": 15 }
@@ -185,34 +217,68 @@ def handle_client(sock, clientID):
                 elif subRequest == "list_all":
                     pass
                 else:
+                    print("invalid subrequest type")
                     sock.sendall("Invalid subRequest type.".encode('ascii'))
                     continue
 
-                # Sending the results 
+                # Extracting the sources from the api  
                 results = get_sources(params)
                 if results:
-                    sources=[]
-                    sources_list = results.get('sources', [])
-                    for source in sources_list:
-                        name = source.get('name')
-                        sources.append({"name": name})
-
-                    save_to_json(user_name, "sources","A4", sources)  # Save to JSON file
-                    sources_str = ""
+                    dataFromApi =save_to_json(user_name, "sources", "A4", results)  # save to JSON file (calling the method)
+                    sources = dataFromApi.get('sources', [])
+                    names = []
                     for source in sources:
-                        sources_str += source["name"] + "\n"
-                    print("the sources:",sources_str)
+                        name = source.get('name')
+                        names.append({"name": name})
+
+                    names_str = ""
+                    for name in names:
+                        names_str += name["name"] + "\n"
+                    print("the sources names are:",names_str)
                 else:
-                    sources_str = "No results found"
+                    names_str = "No results found"
             
             except Exception as e:
                 print("Error processing sources request: ", e)
 
             try:
-                # Sending the sources
-                sock.sendall(sources_str.encode('ascii'))
+                # Sending the sources to the client to choose from 
+                sock.sendall(names_str.encode('utf-8'))
+                print("names of sources are sent")
             except Exception as e :
+                sock.sendall(b"error sending the names of sources")
                 print("error sending sources",e)
+
+            # receiving the name chosen from the client
+            chosen_name=sock.recv(2048).decode('utf-8')
+            print("the chosen name of source is received :", chosen_name)
+
+            # extracting data based on the chosen name 
+            try:
+                for source in sources:
+                    if source.get('name')==chosen_name:
+                        id=source.get('id')
+                        sdescription=source.get('description')
+                        surl=source.get('url')
+                        scategory=source.get('category')
+                        slanguage=source.get('language')
+                        scountry=source.get('country')
+
+                        source_details=("name of source: " + chosen_name + "\n" +
+                                            "id: " + id + "\n" +
+                                            "Description: " + sdescription + "\n" +
+                                            "category: " + scategory + "\n" +
+                                            "URL: " + surl + "\n" +
+                                            "language: " + slanguage + "\n"
+                                            "country: " + scountry + "\n" )
+                        print(" source details:" ,source_details)
+                        sock.sendall(source_details.encode('utf-8'))
+                else:
+                    print("the name of source chosen is not in the names list")
+                    sock.sendall(b"the name of sourcee chosen is not in the names list")
+            except Exception as e:
+                print("error at extracting source data ")
+                sock.sendall(b"server has an error with extracting the data ")
 
         # Close the socket after sending response
         sock.close()
