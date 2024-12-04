@@ -187,10 +187,13 @@ def handle_client(sock, clientID):
                         print("")
                         print("the articles details are sent ")
                         break
-                else:
-                    print("the title chosen is not in the titles list")
-                    sock.sendall(b"the title chosen is not in the titles list")
-                    break
+
+                    else:
+                        print("the title chosen is not in the titles list")
+                        sock.sendall(b"the title chosen is not in the titles list")
+                        break
+                continue
+            
             except Exception as e:
                 print("error at extracting headline data ", e)
                 sock.sendall(b"server has an error with extracting the data ")
@@ -320,10 +323,12 @@ def handle_client(sock, clientID):
                         print("")
                         print("the articles details are sent ")
                         break
-                else:
-                    print("the name of source chosen is not in the names list")
-                    sock.sendall(b"the name of sourcee chosen is not in the names list")
-                    break
+                    else:
+                        print("the name of source chosen is not in the names list")
+                        sock.sendall(b"the name of sourcee chosen is not in the names list")
+                        break
+                continue
+            
             except Exception as e:
                 print("error at extracting source data ")
                 sock.sendall(b"server has an error with extracting the data ")
