@@ -35,7 +35,8 @@ def send_choice(value):
     not_full_data=client.recv_choice()
     full_data=send_gui_choice()
     print(" choice is sent ")
-    
+    print("$"*50)
+    print(" the choice is ",choice)
     print("*"*77)
     print(" this is the full data ", full_data)
     Label(root,text="your choice is sent ").grid(row=0,column=0)
@@ -50,7 +51,7 @@ def view_data(value):
     if not w:
         Error_labale=Label(root,text=" error at reciving the titles ").grid(row=0, column=0)
         # Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
-        return
+        return main_menu()
     Label(root, text=" choose from those titles ").grid(row=0, column=0)
     print(" choose from ",w)
     c=0
@@ -70,6 +71,10 @@ def view_data(value):
         clear()
         for i in range(0,n):
             k=my_list[i]
+            if k=="":
+                continue 
+            elif k=="[Removed]":
+                continue
             Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
             c=c+1
         # client.send_choice(m.get())
@@ -81,7 +86,8 @@ def view_data(value):
         #     Error_labale=Label(root,text=" error at reciving full data")
         #     Error_labale.grid(row=0,column=0)
         #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
-            
+        print("&"*50)
+        print(" the choice is ",m.get()) 
         Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip())).grid(row=c+1,column=0)
         # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)
         Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
@@ -107,15 +113,15 @@ def send(value):
     # msg=value
     global request_counter
     myy_labale.grid(row=1,column=0,columnspan=2)
-    if is_clicked():
+    # if is_clicked():
         # print("request counter number is ",request_counter) 
         # if request_counter>=1:
             # client.send(userName)
-        m=send_request()
-        print("-"*25)
-        print(" this is m ",m)
-        # request_counter+=1
-        print(" request  is sent to server")
+    m=send_request()
+    print("-"*25)
+    print(" this is m ",m)
+    # request_counter+=1
+    print(" request  is sent to server")
         # p,returned_data=return_data()
         # view_data(p)
         # print("this is p ",p)
