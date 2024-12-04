@@ -12,6 +12,8 @@ def save_to_json(client_name, option, group_id, data):
     with open (file_name,'w') as f :
         json.dump(data, f , indent=4)
     print("data saved to :", file_name)
+    return data
+
 
 def get_headlines(params):
     try:
@@ -29,10 +31,10 @@ def get_headlines(params):
 def get_sources(params):
     try:
         print("the sources request is processing ")
-        response = newsapi.get_sources(**params)  # Call the API with params
+        APIresponse = newsapi.get_sources(**params)  # Call the API with params
         print("the sources response is saved")
-        print(response)# for testing
-        return response  
+        print(APIresponse)# for testing
+        return APIresponse  
     except Exception as e:
         print("Error fetching sources:", e)
         
@@ -45,8 +47,8 @@ def handle_client(sock, clientID):
     while True:
         try:
 
-            data = sock.recv(2084).decode()  # Receive data from client
-            values = data.split("|")
+            dataFromClient = sock.recv(2084).decode()  # Receive data from client
+            values = dataFromClient.split("|")
             print("This is the server values:", values)
             user_name,request, subRequest, dataRequested = values
 
@@ -113,17 +115,15 @@ def handle_client(sock, clientID):
 
             # Extracting the headlines 
                 results = get_headlines(params) # calling the method 
-                if results:
+                print("api results:", results)
+                if results :
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
-                    articles = dataFromApi.get('articles',  [])
+                    articles = dataFromApi.get('articles',[])
+                    print("articles:",articles)
                     titles = []
                     print("")
                     print("the titles of all the articles:")
-                    if not articles:  # Check if articles list is empty
-                        print("No articles available")
-                        sock.sendall(b"No articles available")  
-                        break
-                    else:
+                    if articles:
                         for article in articles:
                             title= article.get('title')
                             print(" title :",title)
@@ -132,15 +132,21 @@ def handle_client(sock, clientID):
                         titles_str =" "
                         for title in titles:
                             titles_str+= title["title"]+"\n"
+                    else: # Check if articles list is empty
+                        print("No articles available")
+                        sock.sendall(b"No articles available")  
+                        break
                 else:
-                        titles_str = "No results found."
-
+                        print("no results found")
+                        titles_str = "No results found."    
+ 
             except Exception as e:
                 print("Error handling headlines subrequests", e)
 
             try:
                 # Send the titles
                 sock.sendall(titles_str.encode('utf-8'))
+                print("titles are sent")
             except Exception as e :
                 sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
