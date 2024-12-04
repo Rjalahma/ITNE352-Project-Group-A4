@@ -32,9 +32,9 @@ def send_choice(value):
     global choice
     choice=value
     clear()
-    client.send_choice(choice)
-    if request_type=="headlines":
-        not_full_data=client.recv_choice()
+    # client.send_choice(choice)
+    # if request_type=="headlines":
+    #     not_full_data=client.recv_choice()
     full_data=send_gui_choice()
     print(" choice is sent ")
     print("$"*50)
@@ -91,7 +91,7 @@ def view_data(value):
         print("&"*50)
         d=m.get()
         print(" the choice is ",m.get()) 
-        Button(root,text=" send your choice ",command=lambda:send_choice(m.get())).grid(row=c+1,column=0)
+        Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip())).grid(row=c+1,column=0)
         print("*"*25)
         print(" the choice is ",d) 
         # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)

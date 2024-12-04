@@ -5,7 +5,10 @@ from newsapi import NewsApiClient
 
 apikey = "75087d7737f64055bf57575247e9a59d"
 newsapi = NewsApiClient(api_key=apikey)
-
+user_name=""
+request=""
+subRequest =""
+dataRequested="" 
 def save_to_json(client_name, option, group_id, data):
     file_name=f"{client_name}_{option}_{group_id}.json"
     print("file created")
@@ -188,10 +191,10 @@ def handle_client(sock, clientID):
                         print("the articles details are sent ")
                         break
 
-                    else:
-                        print("the title chosen is not in the titles list")
-                        sock.sendall(b"the title chosen is not in the titles list")
-                        break
+                else:
+                    print("the title chosen is not in the titles list")
+                    sock.sendall(b"the title chosen is not in the titles list")
+                    break
                 continue
             
             except Exception as e:
@@ -323,19 +326,19 @@ def handle_client(sock, clientID):
                         print("")
                         print("the articles details are sent ")
                         break
-                    else:
-                        print("the name of source chosen is not in the names list")
-                        sock.sendall(b"the name of sourcee chosen is not in the names list")
-                        break
+                else:
+                    print("the name of source chosen is not in the names list")
+                    sock.sendall(b"the name of sourcee chosen is not in the names list")
+                    break
                 continue
             
             except Exception as e:
                 print("error at extracting source data ")
                 sock.sendall(b"server has an error with extracting the data ")
-
+        sock.close()
         
         # Close the socket after sending response
-        sock.close()
+        
 
 def handle_server():
     print(30 * "-")
