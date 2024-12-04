@@ -14,6 +14,7 @@ global userName
 userName=""
 request_counter=0
 choice=""
+global m
 def clear():
       for widget in root.grid_slaves():
         widget.destroy()
@@ -31,8 +32,9 @@ def send_choice(value):
     global choice
     choice=value
     clear()
-    # client.send_choice(choice)
-    not_full_data=client.recv_choice()
+    client.send_choice(choice)
+    if request_type=="headlines":
+        not_full_data=client.recv_choice()
     full_data=send_gui_choice()
     print(" choice is sent ")
     print("$"*50)
@@ -87,8 +89,11 @@ def view_data(value):
         #     Error_labale.grid(row=0,column=0)
         #     Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
         print("&"*50)
+        d=m.get()
         print(" the choice is ",m.get()) 
-        Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip())).grid(row=c+1,column=0)
+        Button(root,text=" send your choice ",command=lambda:send_choice(m.get())).grid(row=c+1,column=0)
+        print("*"*25)
+        print(" the choice is ",d) 
         # Label(root,text=" view full data", compound=lambda:view_full_data(full_data) ).grid(row=c+2,column=0)
         Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
         # Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+2, column=0)
@@ -236,11 +241,11 @@ def search_by_language_sourc():
     global request_type,sub_menue_choise
     request_type="sources"
     sub_menue_choise="by_language"
-    m=StringVar()
-    Radiobutton(root,text="arabic",variable=m,value="ar").grid(row=0,column=0)
-    Radiobutton(root,text="engalish",variable=m,value="en").grid(row=1,column=0)
-    print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(m.get()),padx=100).grid(row=2,column=0)
+    k=StringVar()
+    Radiobutton(root,text="arabic",variable=k,value="ar").grid(row=0,column=0)
+    Radiobutton(root,text="engalish",variable=k,value="en").grid(row=1,column=0)
+    print(" k",k.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
+    b1=Button(root,text="send",command=lambda:send(k.get()),padx=100).grid(row=2,column=0)
     Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=3,column=0)
 def List_all_sourc():
     clear()
