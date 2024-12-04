@@ -3,7 +3,7 @@ import threading
 import json
 from newsapi import NewsApiClient
 
-apikey = "d07953f1256b41a6a39f2429c02f0d0e"
+apikey = "75087d7737f64055bf57575247e9a59d"
 newsapi = NewsApiClient(api_key=apikey)
 
 def save_to_json(client_name, option, group_id, data):
