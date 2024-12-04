@@ -138,7 +138,7 @@ def handle_client(sock, clientID):
                     else: # Check if articles list is empty
                         print("No articles available")
                         sock.sendall(b"No articles available")  
-                        break
+                        continue
                 else:
                         print("no results found")
                         titles_str = "No results found."    
