@@ -146,19 +146,24 @@ def handle_client(sock, clientID):
             try:
                 # Send the titles
                 sock.sendall(titles_str.encode('utf-8'))
+                print("")
                 print("titles are sent")
             except Exception as e :
                 sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
 
+            try:
             # receiving the title chosen from the client  
-            chosen_title=sock.recv(2048).decode('utf-8')
-            print("")
-            print("the chosen title is received :", chosen_title)
-            print("")
-            print("now the details about the title will be collected")
-            print("")
-
+                print("waiting to receive title chosen from the client ")
+                print("")
+                chosen_title=sock.recv(2048).decode('utf-8')
+                print("")
+                print("the chosen title is received :", chosen_title)
+                print("")
+                print("now the details about the title will be collected")
+                print("")
+            except Exception as e:
+                print("error receiving title chosen:",e)
             # extracting data based on the chosen title
             try:
                 for article in articles:
@@ -248,11 +253,7 @@ def handle_client(sock, clientID):
                     names = []
                     print("")
                     print("the names of all the sources:")
-                    if not sources:
-                        print("No sources available")
-                        sock.sendall(b"No cources available")
-                        break
-                    else:
+                    if sources: 
                         count=0
                         for source in sources:
                             if count >= 15: # to limit the names to 15 
@@ -264,20 +265,29 @@ def handle_client(sock, clientID):
                         print("")
                         names_str = ""
                         for name in names:
-                            names_str += name["name"] + "\n"
+                            names_str += name["name"] +"\n"
+                    else:
+                        print("No sources available")
+                        sock.sendall(b"No sources available")  
+                        break
                 else:
-                    sources_str = "No results found"
+                    print("no results found")
+                    names_str = "No results found"
             
             except Exception as e:
                 print("Error processing sources request: ", e)
 
             try:
                 # Sending the sources
-                sock.sendall(sources_str.encode('ascii'))
+                sock.sendall(names_str.encode('ascii'))
+                print("")
+                print("names are sent sucssefully")
             except Exception as e :
                 print("error sending sources",e)
 
             # receiving the name chosen from the client
+            print("")
+            print("waiting to receive name chosen from the client")
             chosen_name=sock.recv(2048).decode('utf-8')
             print("")
             print("the chosen name of source is received :", chosen_name)
