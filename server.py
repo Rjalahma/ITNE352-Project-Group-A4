@@ -3,7 +3,7 @@ import threading
 import json
 from newsapi import NewsApiClient
 
-apikey = "75087d7737f64055bf57575247e9a59d"
+apikey = "d07953f1256b41a6a39f2429c02f0d0e"
 newsapi = NewsApiClient(api_key=apikey)
 
 user_name=""
@@ -133,24 +133,41 @@ def handle_client(sock, clientID):
                     print("the lists of all the articles:")
                     if articles:
                         for article in articles:
+                            print("inside article loop")
                             title= article.get('title','no title available')
+                            print("collected title")
                             author=article.get('author','no author available')
+                            print("collected author")
                             source=article.get('source')
+                            
                             if source:
                                 sourcename=source.get("name", "Unknown Source name")
                             else:
                                 sourcename="no Source available"
+                            print("collected source")
 
-                            list=  ("source name:"+sourcename+"\n"+
-                                    "author:"+author+"\n"+
-                                    "title:"+title+"\n")    
-                            
-                            print(" list :",list)
-                            lists.append({"list":list}) # Add the title to the titles list
+                            list_t=(    f"source name:{sourcename}\n"+
+                                    f"author:{author}\n"+
+                                    f"title:{title}\n" )
+                                                    
+                            print(" list_t :",list_t)
+                            lists.append({"list": list_t}) # Add the title to the titles list
+                            print("list added to list ")
+                            print(lists)
+                            lists_str += list_t + "|"
+                            # list.append("source name:"+sourcename+"\n")
+                            # print(" source is apppp")
+                            # list.append("author:"+author+"\n")
+                            # print(" auth is apppp")
+                            # list.append("title:"+title+"\n")
+                            # print(" t is apppp")
+                            # list.append("|")
+                            # print(" ] is apppp")
                         print("")
-                        lists_str =" "
-                        for list in lists:
-                            lists_str+= list["list"]+"|"
+                        # lists_str =str(list_t)
+                        # for list in lists:
+                        #     lists_str+= list_t+"|"
+                
                     else: # Check if articles list is empty
                         print("No articles available")
                         sock.sendall(b"No articles available")  
