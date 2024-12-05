@@ -56,7 +56,7 @@ def handle_client(sock, clientID):
             dataFromClient = sock.recv(2084).decode()  # Receive data from client
             # beacuse all data recieved in one object now we will split them so we can work with them seperatly 
             values = dataFromClient.split("|")
-            print("This is the server values:", values) # for testing 
+            #print("This is the server values:", values) # for testing 
             user_name,request, subRequest, dataRequested = values
 
             print("Requested service type is:", request)
@@ -64,7 +64,7 @@ def handle_client(sock, clientID):
             print("Requested data is:", dataRequested)
             print("")
 
-        except Exception :
+        except Exception as e:
             print("Error receiving data: ", e)
             break
 
@@ -128,54 +128,68 @@ def handle_client(sock, clientID):
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
                     articles = dataFromApi.get('articles',[])
                     print("articles:",articles)
-                    titles = []
+                    lists = []
                     print("")
-                    print("the titles of all the articles:")
+                    print("the lists of all the articles:")
                     if articles:
                         for article in articles:
-                            title= article.get('title')
-                            print(" title :",title)
-                            titles.append({"title":title}) # Add the title to the titles list
+                            title= article.get('title','no title available')
+                            author=article.get('author','no author available')
+                            source=article.get('source')
+                            if source:
+                                sourcename=source.get("name", "Unknown Source name")
+                            else:
+                                sourcename="no Source available"
+
+                            list=  ("source name:"+sourcename+"\n"+
+                                    "author:"+author+"\n"+
+                                    "title:"+title+"\n")    
+                            
+                            print(" list :",list)
+                            lists.append({"list":list}) # Add the title to the titles list
                         print("")
-                        titles_str =" "
-                        for title in titles:
-                            titles_str+= title["title"]+"\n"
+                        lists_str =" "
+                        for list in lists:
+                            lists_str+= list["list"]+"|"
                     else: # Check if articles list is empty
                         print("No articles available")
                         sock.sendall(b"No articles available")  
                         continue
                 else:
                         print("no results found")
-                        titles_str = "No results found."    
+                        lists_str = "No results found."    
  
             except Exception as e:
                 print("Error handling headlines subrequests", e)
 
             try:
                 # Send the titles
-                sock.sendall(titles_str.encode('utf-8'))
+                sock.sendall(lists_str.encode('utf-8'))
                 print("")
-                print("titles are sent")
+                print("lists are sent")
             except Exception as e :
-                sock.sendall(b"error sending the titles")
+                sock.sendall(b"error sending the lists")
                 print("error sending the titles ", e)
 
             try:
             # receiving the title chosen from the client  
-                print("waiting to receive title chosen from the client ")
+                print("waiting to receive list chosen from the client ")
                 print("")
-                chosen_title=sock.recv(2048).decode('utf-8')
+                chosen_list=sock.recv(2048).decode('utf-8')
                 print("")
-                print("the chosen title is received :", chosen_title)
+                print("the chosen title is received :", chosen_list)
                 print("")
                 print("now the details about the title will be collected")
                 print("")
             except Exception as e:
                 print("error receiving title chosen:",e)
-            # extracting data based on the chosen title
+            # extracting data based on the chosen list
+                # split the list into original strings (title, author, source name)
+                d=chosen_list.split("\n")
+                chosen_title=d[3].split(": ")[1] #to extraxt the title 
             try:
                 for article in articles:
-                    if article.get('title') == chosen_title.strip():
+                    if article.get('title') == chosen_title.get().strip():
                         content=str(article.get('content','no content provided'))
                         description=str(article.get('description','no description provided'))
                         author=str(article.get('author','no author provided'))
@@ -183,7 +197,7 @@ def handle_client(sock, clientID):
                         date=str(article.get('publishedAt', 'no time provided' ))
 
                         article_details= (  "\n" +
-                                            "Title: " + chosen_title + "\n" +
+                                            "Title: " + chosen_list + "\n" +
                                             "Content: " + content + "\n" +
                                             "Description: " + description + "\n" +
                                             "Author: " + author + "\n" +
