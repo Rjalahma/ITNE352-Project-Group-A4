@@ -146,15 +146,21 @@ def handle_client(sock, clientID):
                                 sourcename="no Source available"
                             print("collected source")
 
-                            list_t=(    f"source name:{sourcename}\n"+
-                                    f"author:{author}\n"+
-                                    f"title:{title}\n" )
-                                                    
+                            # list_t=(    f"source name:{sourcename}\n"+
+                            #         f"author:{author}\n"+
+                            #         f"title:{title}\n" )
+                            # title_t="title",title
+                            # author_t="author",author
+                            # source_t="sorce name",sourcename
+                            # title_t = f"title: {title}"
+                            author_t = f"author: {author}"
+                            source_t = f"source name: {sourcename}"
+                            list_t="\n".join([title,author_t,source_t])                   
                             print(" list_t :",list_t)
                             lists.append({"list": list_t}) # Add the title to the titles list
                             print("list added to list ")
                             print(lists)
-                            lists_str += list_t + "|"
+                            lists_str ="|".join([list_t]) 
                             # list.append("source name:"+sourcename+"\n")
                             # print(" source is apppp")
                             # list.append("author:"+author+"\n")
@@ -181,9 +187,10 @@ def handle_client(sock, clientID):
 
             try:
                 # Send the titles
+                lists_str=str(lists)
                 sock.sendall(lists_str.encode('utf-8'))
-                print("")
-                print("lists are sent")
+                print("%"*70)
+                print("lists are sent" , lists_str)
             except Exception as e :
                 sock.sendall(b"error sending the lists")
                 print("error sending the titles ", e)
