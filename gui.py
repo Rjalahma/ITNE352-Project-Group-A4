@@ -120,11 +120,11 @@ def search_for_catogry_headlines() :
     global request_type,sub_menue_choise
     request_type="headlines"
     sub_menue_choise="by_category"
-    m=StringVar()
+    m=StringVar(value="")
     Radiobutton(root,text="business",variable=m,value="business_news").grid(row=0,column=0)
-    Radiobutton(root,text="genral",variable=m,value="general_news").grid(row=1,column=0)
+    Radiobutton(root,text="general",variable=m,value="general_news").grid(row=1,column=0)
     Radiobutton(root,text="health",variable=m,value="health_news").grid(row=2,column=0)
-    Radiobutton(root,text="seince",variable=m,value="science_news").grid(row=3,column=0)
+    Radiobutton(root,text="science",variable=m,value="science_news").grid(row=3,column=0)
     Radiobutton(root,text="sport",variable=m,value="sport_news").grid(row=4,column=0)
     Radiobutton(root,text="technology",variable=m,value="technology_news").grid(row=5,column=0)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
@@ -135,15 +135,15 @@ def search_for_country_headlines() :
     global request_type,sub_menue_choise
     request_type="headlines"
     sub_menue_choise="by_country"
-    m=StringVar()
-    Radiobutton(root,text="au",variable=m,value="au_news").grid(row=0,column=0)
-    Radiobutton(root,text="ca",variable=m,value="ca_news").grid(row=1,column=0)
-    Radiobutton(root,text="jp",variable=m,value="jp_news").grid(row=2,column=0)
-    Radiobutton(root,text="ae",variable=m,value="ae_news").grid(row=3,column=0)
-    Radiobutton(root,text="sa",variable=m,value="sa_news").grid(row=4,column=0)
-    Radiobutton(root,text="kr",variable=m,value="kr_news").grid(row=5,column=0)
-    Radiobutton(root,text="us",variable=m,value="us_news").grid(row=6,column=0)
-    Radiobutton(root,text="ma",variable=m,value="ma_news").grid(row=7,column=0)
+    m=StringVar(value="")
+    Radiobutton(root,text="Australia",variable=m,value="au_news").grid(row=0,column=0)
+    Radiobutton(root,text="Canada",variable=m,value="ca_news").grid(row=1,column=0)
+    Radiobutton(root,text="Japan",variable=m,value="jp_news").grid(row=2,column=0)
+    Radiobutton(root,text="United Arab Emirates ",variable=m,value="ae_news").grid(row=3,column=0)
+    Radiobutton(root,text="Saudi Arabia",variable=m,value="sa_news").grid(row=4,column=0)
+    Radiobutton(root,text="South Korea",variable=m,value="kr_news").grid(row=5,column=0)
+    Radiobutton(root,text="United States of America",variable=m,value="us_news").grid(row=6,column=0)
+    Radiobutton(root,text="Morocco",variable=m,value="ma_news").grid(row=7,column=0)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
     b1=Button(root,text="send",command=lambda:send(m.get()),padx=68).grid(row=8,column=0)
     Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=9,column=0)
@@ -152,11 +152,14 @@ def List_all_headlines():
     global request_type,sub_menue_choise,msg
     request_type="headlines"
     sub_menue_choise="list_all"
-    Label(root,text=" list all headlines ").grid(row=0,column=0)
+    root.geometry("330x105")
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0,columnspan=2)
+    Label(root,text=" list all headlines ",font=("Times New Roman", 14),fg="dark green").grid(row=1,column=0,columnspan=2)
+    my_lable1=Label(root,text=""*5).grid(row=2,column=0,columnspan=2)
     msg="all_news"
     print(" msg ",msg,"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(msg),padx=68).grid(row=1,column=0)
-    Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=2,column=0)
+    b1=Button(root,text="send",command=lambda:send(msg),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=1)
+    Button(root,text="back to the main menu",command=main_menu,padx=10,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=0)
 def heald_menu():
     clear()
     root.geometry("365x205")
@@ -164,7 +167,7 @@ def heald_menu():
     my_lable2=Label(root,text="Search headline menu",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
     my_lable3=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green").grid(row=2,column=0,columnspan=2)  
     b1=Button(root,text="search for key words",padx=8,font=("Times New Roman", 14),fg="dark green",command=search_for_key_words).grid(row=3,column=0)
-    b2=Button(root,text="search for catogry",font=("Times New Roman", 14),fg="dark green",padx=20,command=search_for_catogry_headlines).grid(row=4,column=0)
+    b2=Button(root,text="search for cateogry",font=("Times New Roman", 14),fg="dark green",padx=20,command=search_for_catogry_headlines).grid(row=4,column=0)
     b3=Button(root,text="search for country",font=("Times New Roman", 14),fg="dark green",padx=15,command=search_for_country_headlines).grid(row=4,column=1)
     b4=Button(root,text="List all new headline",font=("Times New Roman", 14),fg="dark green",padx=11,command=List_all_headlines).grid(row=3,column=1)
     b5=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=95).grid(row=5,column=0,columnspan=2)
@@ -173,67 +176,81 @@ def search_for_catogry_sourc() :
     global request_type,sub_menue_choise
     request_type="sources"
     sub_menue_choise="by_category"
-    m=StringVar()
-    Radiobutton(root,text="business",variable=m,value="business_sources").grid(row=0,column=0)
-    Radiobutton(root,text="genral",variable=m,value="general_sources").grid(row=1,column=0)
-    Radiobutton(root,text="health",variable=m,value="health_sources").grid(row=2,column=0)
-    Radiobutton(root,text="seince",variable=m,value="science_sources").grid(row=3,column=0)
-    Radiobutton(root,text="sport",variable=m,value="sport_sources").grid(row=4,column=0)
-    Radiobutton(root,text="technology",variable=m,value="technology_sources").grid(row=5,column=0)
+    m=StringVar(value="")
+    root.geometry("380x290")
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
+    Radiobutton(root,text="business",variable=m,value="business_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=1,column=0)
+    Radiobutton(root,text="general",variable=m,value="general_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=2,column=0)
+    Radiobutton(root,text="health",variable=m,value="health_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=3,column=0)
+    Radiobutton(root,text="science",variable=m,value="science_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=4,column=0)
+    Radiobutton(root,text="sport",variable=m,value="sport_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=5,column=0)
+    Radiobutton(root,text="technology",variable=m,value="technology_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=6,column=0)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(m.get()),padx=68).grid(row=6,column=0)
-    Button(root,text="back to the main menu",command=main_menu).grid(row=7,column=0)
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=7,column=0,columnspan=2)
+    b1=Button(root,text="send",command=lambda:send(m.get()),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=1)
+    Button(root,text="back to the main menu",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=0)
 def search_for_country_sourc() :
     clear()
     global request_type,sub_menue_choise
     request_type="sources"
     sub_menue_choise="by_country"
-    m=StringVar()
-    Radiobutton(root,text="au",variable=m,value="au_sources").grid(row=0,column=0)
-    Radiobutton(root,text="ca",variable=m,value="ca_sources").grid(row=1,column=0)
-    Radiobutton(root,text="jp",variable=m,value="jp_sources").grid(row=2,column=0)
-    Radiobutton(root,text="ae",variable=m,value="ae_sources").grid(row=3,column=0)
-    Radiobutton(root,text="sa",variable=m,value="sa_sources").grid(row=4,column=0)
-    Radiobutton(root,text="kr",variable=m,value="kr_sources").grid(row=5,column=0)
-    Radiobutton(root,text="us",variable=m,value="us_sources").grid(row=6,column=0)
-    Radiobutton(root,text="ma",variable=m,value="ma_sources").grid(row=7,column=0)
+    m=StringVar(value="")
+    root.geometry("380x355")
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
+    Radiobutton(root,text="Australia",variable=m,value="au_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=1,column=0)
+    Radiobutton(root,text="Canada",variable=m,value="ca_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=2,column=0)
+    Radiobutton(root,text="Japan",variable=m,value="jp_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=3,column=0)
+    Radiobutton(root,text="United Arab Emirates",variable=m,value="ae_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=4,column=0)
+    Radiobutton(root,text="Saudi Arabia",variable=m,value="sa_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=5,column=0)
+    Radiobutton(root,text="South Korea",variable=m,value="kr_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=6,column=0)
+    Radiobutton(root,text="United States of America",variable=m,value="us_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=7,column=0)
+    Radiobutton(root,text="Morocco",variable=m,value="ma_sources",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=8,column=0)
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=9,column=0,columnspan=2)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(m.get()),padx=68).grid(row=8,column=0)
-    Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=9,column=0)
+    b1=Button(root,text="send",command=lambda:send(m.get()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=10,column=1)
+    Button(root,text="back to the main menu",command=main_menu,font=("Times New Roman", 14),fg="dark green",padx=30).grid(row=10,column=0)
 def search_by_language_sourc():
     clear()
     global request_type,sub_menue_choise
     request_type="sources"
     sub_menue_choise="by_language"
-    k=StringVar()
-    Radiobutton(root,text="arabic",variable=k,value="ar").grid(row=0,column=0)
-    Radiobutton(root,text="engalish",variable=k,value="en").grid(row=1,column=0)
+    root.geometry("235x160")
+    k=StringVar(value="")
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
+    Radiobutton(root,text="arabic",variable=k,value="ar",font=("Times New Roman", 14),fg="dark green").grid(row=1,column=0)
+    Radiobutton(root,text="engalish",variable=k,value="en",font=("Times New Roman", 14),fg="dark green").grid(row=2,column=0)
     print(" k",k.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(k.get()),padx=100).grid(row=2,column=0)
-    Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=3,column=0)
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=3,column=0,columnspan=2)
+    b1=Button(root,text="send",font=("Times New Roman", 14),fg="dark green",command=lambda:send(k.get())).grid(row=4,column=1)
+    Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu).grid(row=4,column=0)
 def List_all_sourc():
     clear()
     global request_type,sub_menue_choise
     request_type="sources"
     sub_menue_choise="list_all"
-    Label(root,text=" list all sources ").grid(row=0,column=0)
+    root.geometry("230x130")
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
+    Label(root,text=" list all sources ",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
+    my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=2,column=0,columnspan=2)
     msg="all_sources"
-    b1=Button(root,text="send",command=lambda:send(msg),padx=68).grid(row=1,column=0)
-    Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=2,column=0)
+    b1=Button(root,text="send",font=("Times New Roman", 14),fg="dark green",command=lambda:send(msg)).grid(row=3,column=1)
+    Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu).grid(row=3,column=0)
 def sourcemenue():
     clear()
-    root.geometry("350x205")
+    root.geometry("370x205")
     my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
     my_lable2=Label(root,text="List of sources menu",font=("Times New Roman", 16),fg="dark green",).grid(row=1,column=0,columnspan=2)
     my_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=2,column=0,columnspan=2)
-    b6=Button(root,text="search by catogry",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_catogry_sourc).grid(row=3,column=0)
+    b6=Button(root,text="search by cateogry",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_catogry_sourc).grid(row=3,column=0)
     b7=Button(root,text="search by country",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_country_sourc).grid(row=3,column=1)
     b8=Button(root,text="search by language",font=("Times New Roman", 14),fg="dark green",padx=16,command=search_by_language_sourc).grid(row=4,column=0)
     b9=Button(root,text="List all",font=("Times New Roman", 14),fg="dark green",padx=63,command=List_all_sourc).grid(row=4,column=1)
     b10=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=85).grid(row=5,column=0,columnspan=2)
 def closing():
-    global request_type
+    global request_type,sub_menue_choise,msg
     request_type="quit"
+    sub_menue_choise="good"
+    msg="bye"
     client.client_close()
     root.quit()
 def main_menu():
