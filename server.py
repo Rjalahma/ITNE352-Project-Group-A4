@@ -5,10 +5,12 @@ from newsapi import NewsApiClient
 
 apikey = "75087d7737f64055bf57575247e9a59d"
 newsapi = NewsApiClient(api_key=apikey)
+
 user_name=""
 request=""
 subRequest =""
 dataRequested="" 
+
 def save_to_json(client_name, option, group_id, data):
     file_name=f"{client_name}_{option}_{group_id}.json"
     print("file created")
@@ -46,13 +48,15 @@ def handle_client(sock, clientID):
     print(30 * "-")
     print("New connection from", clientID[0], "is accepted", "with the port number:", clientID[1])
     print("Wait for the client to send a request")
+    print(30 * "-")
 
     while True:
         try:
-
+            #receiving the name of the client+ the data 
             dataFromClient = sock.recv(2084).decode()  # Receive data from client
+            # beacuse all data recieved in one object now we will split them so we can work with them seperatly 
             values = dataFromClient.split("|")
-            print("This is the server values:", values)
+            print("This is the server values:", values) # for testing 
             user_name,request, subRequest, dataRequested = values
 
             print("Requested service type is:", request)
@@ -60,17 +64,18 @@ def handle_client(sock, clientID):
             print("Requested data is:", dataRequested)
             print("")
 
-        except Exception as e:
+        except Exception :
             print("Error receiving data: ", e)
             break
 
-        # If client chose to quit
+        #If client choose to quit 
         if request == "quit":        
-            print("Client", clientID, "has quit the connection")
-            sock.sendall("Goodbye!".encode('ascii'))
+            print(user_name," with address :", clientID[0], "has quit the connection")
+            print(subRequest+dataRequested,"!!!")
             break
 
-        elif request == "headlines": 
+            
+        if request == "headlines": 
             params = { "page_size": 15 }
             try:
                 # Searching by a keyword 
@@ -336,6 +341,8 @@ def handle_client(sock, clientID):
                 print("error at extracting source data ")
                 sock.sendall(b"server has an error with extracting the data ")
         sock.close()
+        print(30 * "-")
+        print("The server is now waiting for a new connection...")
         
         # Close the socket after sending response
         
