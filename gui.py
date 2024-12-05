@@ -22,22 +22,26 @@ def clear():
 def view_full_data(value):
     data=value
     clear()
-    Label(root,text=str(data)).grid(row=0, column=0,columnspan=5)
-    Button(root, text="Back to Main Menu", command=main_menu).grid(row=1, column=0)
+    root.geometry("900x500")
+    Label(root,text=str(data),font=("Times New Roman", 12),fg="dark green").grid(row=0, column=0,columnspan=5)
+    Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=1, column=0,columnspan=5)
 
 def send_choice(value):
     global choice
     choice=value
     clear()
+    root.geometry("300x105")
     full_data=send_gui_choice()
     print(" choice is sent ")
     print("$"*50)
     print(" the choice is ",choice)
     print("*"*77)
     print(" this is the full data ", full_data)
-    Label(root,text="your choice is sent ").grid(row=0,column=0)
-    Button(root,text=" view full data", command=lambda:view_full_data(full_data) ).grid(row=1,column=0)
-    Button(root, text="Back to Main Menu", command=main_menu).grid(row=2, column=0)
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0)
+    Label(root,text="your choice is sent ",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
+    my_lable1=Label(root,text=""*5).grid(row=2,column=0)
+    Button(root,text=" view full data", command=lambda:view_full_data(full_data) ,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=1)
+    Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=3, column=0)
 
 def view_data(value):
     w=value
@@ -47,13 +51,18 @@ def view_data(value):
         return main_menu()
     Label(root, text=" choose from those titles ").grid(row=0, column=0)
     print(" choose from ",w)
-    c=0
+    c=1
     m=StringVar()
-    my_list=w.split("\n")
+    root.geometry("700x600")
+    if request_type=="sources":
+        my_list=w.split("\n")
+    elif request_type=="headlines":
+        my_list=w.split("|")
     n=len(my_list)
     print("="*25)
     no_artical= False
     print(" this is the list ", my_list)
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0)
     if n is None:
         clear()
         
@@ -68,35 +77,38 @@ def view_data(value):
             if k=='No articles available':
                 clear()
                 no_artical=True
-                erroe_labale=Label(root,text="No articles available").grid(row=0,column=0)
-                Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
+                erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
+                Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=c+3, column=0)
             else:    
-                Radiobutton(root,text=str(k),variable=m,value=str(k)).grid(row=c,column=0)
+                Radiobutton(root,text=str(k),variable=m,value=str(k),font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=c,column=0)
                 c=c+1
       
         if no_artical==False:
-            Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip())).grid(row=c+1,column=0)
+            Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=c+2,column=1)
         print("*"*25)
+        my_lable1=Label(root,text=""*5).grid(row=c+1,column=0,columnspan=2)
         print(" the choice is ",m.get()) 
-        Button(root, text="Back to Main Menu", command=main_menu).grid(row=c+3, column=0)
+        Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green" ,padx=30).grid(row=c+2, column=0)
 
 def send(value):
     global button_clicked,msg,send_button
     print("vlaue,",value)
     msg=value
     clear()
+    root.geometry("460x150")
     button_clicked = True
     send_button=True
-    myy_labale1=Label(root,text=" you choosed ").grid(row=0,column=0,columnspan=2)
-    myy_labale=Label(root,text=value)
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0,columnspan=2)
+    myy_labale1=Label(root,text=" you choosed",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
+    myy_labale=Label(root,text=value,font=("Times New Roman", 16)) .grid(row=2,column=0,columnspan=2)
+    my_lable1=Label(root,text=""*5).grid(row=3,column=0,columnspan=2)
     global request_counter
-    myy_labale.grid(row=1,column=0,columnspan=2)
     m=send_request()
     print("-"*25)
     print(" this is m ",m)
     print(" request  is sent to server")
-    Button(root,text=" view recived titles ",command=lambda:view_data(m)).grid(row=3,column=0,columnspan=2)
-    b5=Button(root,text="back to the main menu",command=main_menu,padx=68).grid(row=7,column=0,columnspan=2)
+    Button(root,text=" view recived titles ",command=lambda:view_data(m),font=("Times New Roman", 14),fg="dark green",padx=20).grid(row=4,column=1)
+    b5=Button(root,text="back to the main menu",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green").grid(row=4,column=0)
 
 def enter_input():
     global button_clicked,msg,request_type,sub_menue_choise,enter_button
@@ -106,47 +118,54 @@ def enter_input():
     request_type="headlines"
     sub_menue_choise="key-word"
     h=box.get()
-    Button(root,text="send",command=lambda:send(h),padx=68).grid(row=6,column=0)
-    b5=Button(root,text="back to the main menu",command=main_menu,padx=68).grid(row=7,column=0,columnspan=2)
+    Button(root,text="send",command=lambda:send(h),padx=68,font=("Times New Roman", 14),fg="dark green").grid(row=6,column=0)
+    b5=Button(root,text="back to the main menu",command=main_menu,padx=68,font=("Times New Roman", 14),fg="dark green").grid(row=7,column=0)
 def search_for_key_words():
     clear()
-    my_labal3=Label(root,text="Enter the key word").grid(row=0,column=0)
+    root.geometry("230x100")
+    my_labal3=Label(root,text="Enter the key word",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
     global box
     box=Entry(root,width=35,borderwidth=5)
     box.grid(row=1,column=0)
-    my_button2=Button(root,text="done",command=enter_input).grid(row=6,column=0)    
+    my_button2=Button(root,text="done",command=enter_input,font=("Times New Roman", 14),fg="dark green").grid(row=6,column=0)    
 def search_for_catogry_headlines() :
     clear()
     global request_type,sub_menue_choise
     request_type="headlines"
     sub_menue_choise="by_category"
     m=StringVar(value="")
-    Radiobutton(root,text="business",variable=m,value="business_news").grid(row=0,column=0)
-    Radiobutton(root,text="general",variable=m,value="general_news").grid(row=1,column=0)
-    Radiobutton(root,text="health",variable=m,value="health_news").grid(row=2,column=0)
-    Radiobutton(root,text="science",variable=m,value="science_news").grid(row=3,column=0)
-    Radiobutton(root,text="sport",variable=m,value="sport_news").grid(row=4,column=0)
-    Radiobutton(root,text="technology",variable=m,value="technology_news").grid(row=5,column=0)
+    root.geometry("390x270")
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0,columnspan=2)
+    Radiobutton(root,text="business",variable=m,value="business_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=1,column=0)
+    Radiobutton(root,text="general",variable=m,value="general_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=2,column=0)
+    Radiobutton(root,text="health",variable=m,value="health_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=3,column=0)
+    Radiobutton(root,text="science",variable=m,value="science_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=4,column=0)
+    Radiobutton(root,text="sport",variable=m,value="sport_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=5,column=0)
+    Radiobutton(root,text="technology",variable=m,value="technology_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=6,column=0)
+    my_lable1=Label(root,text=""*5).grid(row=7,column=0,columnspan=2)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(m.get()),padx=68).grid(row=6,column=0)
-    Button(root,text="back to the main menu",command=main_menu).grid(row=7,column=0)
+    b1=Button(root,text="send",command=lambda:send(m.get()),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=1)
+    Button(root,text="back to the main menu",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=0)
 def search_for_country_headlines() :
     clear()
     global request_type,sub_menue_choise
     request_type="headlines"
     sub_menue_choise="by_country"
+    root.geometry("410x360")
     m=StringVar(value="")
-    Radiobutton(root,text="Australia",variable=m,value="au_news").grid(row=0,column=0)
-    Radiobutton(root,text="Canada",variable=m,value="ca_news").grid(row=1,column=0)
-    Radiobutton(root,text="Japan",variable=m,value="jp_news").grid(row=2,column=0)
-    Radiobutton(root,text="United Arab Emirates ",variable=m,value="ae_news").grid(row=3,column=0)
-    Radiobutton(root,text="Saudi Arabia",variable=m,value="sa_news").grid(row=4,column=0)
-    Radiobutton(root,text="South Korea",variable=m,value="kr_news").grid(row=5,column=0)
-    Radiobutton(root,text="United States of America",variable=m,value="us_news").grid(row=6,column=0)
-    Radiobutton(root,text="Morocco",variable=m,value="ma_news").grid(row=7,column=0)
+    my_lable1=Label(root,text=""*5).grid(row=0,column=0,columnspan=2)
+    Radiobutton(root,text="Australia",variable=m,value="au_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=1,column=0)
+    Radiobutton(root,text="Canada",variable=m,value="ca_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=2,column=0)
+    Radiobutton(root,text="Japan",variable=m,value="jp_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=3,column=0)
+    Radiobutton(root,text="United Arab Emirates ",variable=m,value="ae_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=4,column=0)
+    Radiobutton(root,text="Saudi Arabia",variable=m,value="sa_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=5,column=0)
+    Radiobutton(root,text="South Korea",variable=m,value="kr_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=6,column=0)
+    Radiobutton(root,text="United States of America",variable=m,value="us_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=7,column=0)
+    Radiobutton(root,text="Morocco",variable=m,value="ma_news",font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=8,column=0)
+    my_lable1=Label(root,text=""*5).grid(row=9,column=0,columnspan=2)
     print(" m",m.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
-    b1=Button(root,text="send",command=lambda:send(m.get()),padx=68).grid(row=8,column=0)
-    Button(root,text="back to the main menu",command=main_menu,padx=50).grid(row=9,column=0)
+    b1=Button(root,text="send",command=lambda:send(m.get()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=10,column=1)
+    Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=40).grid(row=10,column=0)
 def List_all_headlines():
     clear()
     global request_type,sub_menue_choise,msg
@@ -247,10 +266,11 @@ def sourcemenue():
     b9=Button(root,text="List all",font=("Times New Roman", 14),fg="dark green",padx=63,command=List_all_sourc).grid(row=4,column=1)
     b10=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=85).grid(row=5,column=0,columnspan=2)
 def closing():
-    global request_type,sub_menue_choise,msg
+    global request_type,sub_menue_choise,msg,userName
     request_type="quit"
     sub_menue_choise="good"
     msg="bye"
+    client.send_username_request(userName,request_type,sub_menue_choise,msg)
     client.client_close()
     root.quit()
 def main_menu():
