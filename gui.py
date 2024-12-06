@@ -49,19 +49,15 @@ def view_data(value):
     if not w:
         Error_labale=Label(root,text=" error at reciving the titles ").grid(row=0, column=0)
         return main_menu()
-    Label(root, text=" choose from those titles ").grid(row=0, column=0)
     print(" choose from ",w)
-    c=1
+    c=0
     m=StringVar()
-    root.geometry("700x600")
-    if request_type=="sources":
-        my_list=w.split("\n")
-    elif request_type=="headlines":
-        my_list=w.split(",")
+    root.geometry("1000x1000")
+    my_list=w.split("\n")
     n=len(my_list)
+    print(" myyyy list",my_list)
     print("="*25)
     no_artical= False
-    print(" this is the list ", my_list)
     my_lable1=Label(root,text=""*5).grid(row=0,column=0)
     if n is None:
         clear()
@@ -79,16 +75,21 @@ def view_data(value):
                 no_artical=True
                 erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
                 Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=c+3, column=0)
+            elif k=="No sources available":
+                clear()
+                no_artical=True
+                erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
+                Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=c+3, column=0)
             else:    
                 Radiobutton(root,text=str(k),variable=m,value=str(k),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=c,column=0)
                 c=c+1
       
         if no_artical==False:
-            Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=c+2,column=1)
-        print("*"*25)
-        my_lable1=Label(root,text=""*5).grid(row=c+1,column=0,columnspan=2)
-        print(" the choice is ",m.get()) 
-        Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green" ,padx=30).grid(row=c+2, column=0)
+            Button(root,text=" send your choice ",command=lambda:send_choice(m.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=c+2,column=0)
+            print("*"*25)
+            my_lable1=Label(root,text=""*5).grid(row=c+1,column=0,columnspan=2)
+            print(" the choice is ",m.get()) 
+            Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green" ,padx=50).grid(row=c+3, column=0)
 
 def send(value):
     global button_clicked,msg,send_button
@@ -282,7 +283,7 @@ def main_menu():
     sub_menue_choise=""
     msg=""
     my_lable2=Label(root,text=" Main menu ",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=2,columnspan=3)
-    my_lable=Label(root,text=("welecom",userName),font=("Times New Roman", 14),fg="dark green").grid(row=1,column=2,columnspan=3)
+    my_lable=Label(root,text=("wellcome",userName),font=("Times New Roman", 14),fg="dark green").grid(row=1,column=2,columnspan=3)
     h=Button(root,command=heald_menu,text="search for headings",padx=35,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=2)
     source=Button(root,command=sourcemenue,text="list all sourses",padx=35,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=3)
     quit=Button(root,command=closing,text="quit",padx=55,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=4)
@@ -306,7 +307,7 @@ def is_clicked():
         return True
         
     else:
-        print(" clivked vlaue fals" )
+        print(" clivked vlaue false" )
         return False
 def get_username():
     global userName
