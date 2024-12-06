@@ -3,7 +3,7 @@ import threading
 import json
 from newsapi import NewsApiClient
 
-apikey = "d07953f1256b41a6a39f2429c02f0d0e"
+apikey = "75087d7737f64055bf57575247e9a59d"
 newsapi = NewsApiClient(api_key=apikey)
 
 user_name=""
@@ -56,7 +56,7 @@ def handle_client(sock, clientID):
             dataFromClient = sock.recv(2084).decode()  # Receive data from client
             # beacuse all data recieved in one object now we will split them so we can work with them seperatly 
             values = dataFromClient.split("|")
-            #print("This is the server values:", values) # for testing 
+            print("This is the server values:", values) # for testing 
             user_name,request, subRequest, dataRequested = values
 
             print("Requested service type is:", request)
@@ -64,7 +64,7 @@ def handle_client(sock, clientID):
             print("Requested data is:", dataRequested)
             print("")
 
-        except Exception as e:
+        except Exception :
             print("Error receiving data: ", e)
             break
 
@@ -74,7 +74,6 @@ def handle_client(sock, clientID):
             print(subRequest+dataRequested,"!!!")
             break
 
-            
         if request == "headlines": 
             params = { "page_size": 15 }
             try:
@@ -128,85 +127,54 @@ def handle_client(sock, clientID):
                     dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
                     articles = dataFromApi.get('articles',[])
                     print("articles:",articles)
-                    lists = []
+                    titles = []
                     print("")
-                    print("the lists of all the articles:")
+                    print("the titles of all the articles:")
                     if articles:
                         for article in articles:
-                            print("inside article loop")
-                            title= article.get('title','no title available')
-                            print("collected title")
-                            author=article.get('author','no author available')
-                            print("collected author")
-                            source=article.get('source')
-                            
-                            if source:
-                                sourcename=source.get("name", "Unknown Source name")
-                            else:
-                                sourcename="no Source available"
-                            print("collected source")
-
-                            list_t=(    f"source name:{sourcename}\n"+
-                                    f"author:{author}\n"+
-                                    f"title:{title}\n" )
-                                                    
-                            print(" list_t :",list_t)
-                            lists.append({"list": list_t}) # Add the title to the titles list
-                            print("list added to list ")
-                            print(lists)
-                            lists_str += list_t + "|"
-                            # list.append("source name:"+sourcename+"\n")
-                            # print(" source is apppp")
-                            # list.append("author:"+author+"\n")
-                            # print(" auth is apppp")
-                            # list.append("title:"+title+"\n")
-                            # print(" t is apppp")
-                            # list.append("|")
-                            # print(" ] is apppp")
+                            title= article.get('title')
+                            print(" title :",title)
+                            titles.append({"title":title}) # Add the title to the titles list
                         print("")
-                        # lists_str =str(list_t)
-                        # for list in lists:
-                        #     lists_str+= list_t+"|"
-                
+                        titles_str =" "
+                        for title in titles:
+                            titles_str+= title["title"]+"\n"
                     else: # Check if articles list is empty
                         print("No articles available")
                         sock.sendall(b"No articles available")  
                         continue
                 else:
                         print("no results found")
-                        lists_str = "No results found."    
+                        titles_str = "No results found."    
  
             except Exception as e:
                 print("Error handling headlines subrequests", e)
 
             try:
                 # Send the titles
-                sock.sendall(lists_str.encode('utf-8'))
+                sock.sendall(titles_str.encode('utf-8'))
                 print("")
-                print("lists are sent")
+                print("titles are sent")
             except Exception as e :
-                sock.sendall(b"error sending the lists")
+                sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
 
             try:
             # receiving the title chosen from the client  
-                print("waiting to receive list chosen from the client ")
+                print("waiting to receive title chosen from the client ")
                 print("")
-                chosen_list=sock.recv(2048).decode('utf-8')
+                chosen_title=sock.recv(2048).decode('utf-8')
                 print("")
-                print("the chosen title is received :", chosen_list)
+                print("the chosen title is received :", chosen_title)
                 print("")
                 print("now the details about the title will be collected")
                 print("")
             except Exception as e:
                 print("error receiving title chosen:",e)
-            # extracting data based on the chosen list
-                # split the list into original strings (title, author, source name)
-                d=chosen_list.split("\n")
-                chosen_title=d[3].split(": ")[1] #to extraxt the title 
+            # extracting data based on the chosen title
             try:
                 for article in articles:
-                    if article.get('title') == chosen_title.get().strip():
+                    if article.get('title') == chosen_title.strip():
                         content=str(article.get('content','no content provided'))
                         description=str(article.get('description','no description provided'))
                         author=str(article.get('author','no author provided'))
@@ -214,7 +182,7 @@ def handle_client(sock, clientID):
                         date=str(article.get('publishedAt', 'no time provided' ))
 
                         article_details= (  "\n" +
-                                            "Title: " + chosen_list + "\n" +
+                                            "Title: " + chosen_title + "\n" +
                                             "Content: " + content + "\n" +
                                             "Description: " + description + "\n" +
                                             "Author: " + author + "\n" +
