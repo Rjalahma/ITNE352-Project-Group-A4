@@ -124,7 +124,7 @@ def handle_client(sock, clientID):
                 results = get_headlines(params) # calling the method 
                 print("api results:", results)
                 if results :
-                    dataFromApi =save_to_json(user_name, "headlines", "A4", results)  # save to JSON file (calling the method)
+                    dataFromApi =save_to_json(user_name, "-headlines", "-A4", results)  # save to JSON file (calling the method)
                     articles = dataFromApi.get('articles',[])
                     print("articles:",articles)
                     titles = []
@@ -255,7 +255,7 @@ def handle_client(sock, clientID):
                 # Sending the results 
                 results = get_sources(params)
                 if results:
-                    dataFromApi =save_to_json(user_name, "sources", "A4", results)  # save to JSON file (calling the method)
+                    dataFromApi =save_to_json(user_name, "-sources", "-A4", results)  # save to JSON file (calling the method)
                     sources = dataFromApi.get('sources', [])
                     names = []
                     print("")
