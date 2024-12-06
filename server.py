@@ -16,7 +16,7 @@ def save_to_json(client_name, option, group_id, data):
     print("data saved to :", file_name+"\n")
     return data
 
-# this functon will extract the headlines from the API
+# this functon will get the headlines from the API
 def get_headlines(params):
     try:
         print("the headlines request is processing ")
@@ -27,7 +27,7 @@ def get_headlines(params):
     except Exception as e:
         print("Error fetching headlines: ", e)
         
-# this function will extract the sources from the API
+# this function will get the sources from the API
 def get_sources(params):
     try:
         print("the sources request is processing ")
@@ -115,7 +115,7 @@ def handle_client(sock, clientID):
                     sock.sendall("Invalid subRequest type.".encode("ascii"))
                     continue   
 
-                # calling the function that extract the headlines from API 
+                # call the function that get the headlines from API 
                 results = get_headlines(params) 
                 if results :
                     # save the results to JSON file (calling the method) and save it 
@@ -203,10 +203,12 @@ def handle_client(sock, clientID):
             except Exception as e:
                 print("error at extracting headline data ", e)
                 sock.sendall(b"server has an error with extracting the data ")
-
+        
+        #If client choose sources option 
         elif request == "sources":
             params = { }
             try: 
+                # Searching by category 
                 if subRequest == "by_category":
                     categories = {
                         "business_sources": "business",
@@ -214,8 +216,8 @@ def handle_client(sock, clientID):
                         "health_sources": "health",
                         "science_sources": "science",
                         "sport_sources": "sports",
-                        "technology_sources": "technology"
-                    }
+                        "technology_sources": "technology"}
+                    # extract the chosen catogery by the client from the dictionary and assign it to the parameter
                     category = categories.get(dataRequested)
                     if category:
                         params["category"] = category
@@ -224,11 +226,12 @@ def handle_client(sock, clientID):
                         sock.sendall("Invalid source category code entered by the client.".encode("ascii"))
                         continue
 
+                # Searching by country 
                 elif subRequest == "by_country":
                     countries = {
                         "au_sources": "au", "ca_sources": "ca", "jp_sources": "jp", "ae_sources": "ae",
-                        "sa_sources": "sa", "kr_sources": "kr", "us_sources": "us", "ma_sources": "ma"
-                    }
+                        "sa_sources": "sa", "kr_sources": "kr", "us_sources": "us", "ma_sources": "ma"}
+                    # extract the chosen country by the client from the dictionary and assign it to the parameter
                     country = countries.get(dataRequested)
                     if country:
                         params["country"] = country
@@ -237,8 +240,10 @@ def handle_client(sock, clientID):
                         sock.sendall("Invalid source country code entered by the client.".encode("ascii"))
                         continue
 
+                # Searching by language
                 elif subRequest == "by_language":
                     languages = { "ar": "arabic", "en": "english" }
+                    # extract the chosen language by the client from the dictionary and assign it to the parameter
                     language = languages.get(dataRequested)
                     if language:
                         params["language"] = dataRequested
@@ -254,7 +259,7 @@ def handle_client(sock, clientID):
                     sock.sendall("Invalid subRequest type.".encode("ascii"))
                     continue
 
-                # calling the function that extract the sources from API  
+                # call the function that get the sources from API  
                 results = get_sources(params)
                 if results:
                     # save the results to JSON file (calling the method) and save it 
@@ -358,7 +363,7 @@ def handle_server():
     ssocket.bind(("127.0.0.1", 49999))
     ssocket.listen(3)
     print("The server is now waiting for client")
-    # to accept multiple clients 
+    # to accept multiple clients at the same time 
     while True:
         sock, clientID = ssocket.accept()
         clientthread = threading.Thread(target=handle_client, args=(sock, clientID))
