@@ -74,7 +74,6 @@ def handle_client(sock, clientID):
             print(subRequest+dataRequested,"!!!")
             break
 
-            
         if request == "headlines": 
             params = { "page_size": 15 }
             try:
