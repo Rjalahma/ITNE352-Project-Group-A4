@@ -12,7 +12,7 @@ subRequest =""
 dataRequested="" 
 
 def save_to_json(client_name, option, group_id, data):
-    file_name=f"{client_name}_{option}_{group_id}.json"
+    file_name=f"{client_name}{option}{group_id}.json"
     print("file created")
     with open (file_name,'w') as f :
         json.dump(data, f , indent=4)
@@ -277,7 +277,7 @@ def handle_client(sock, clientID):
                     else:
                         print("No sources available")
                         sock.sendall(b"No sources available")  
-                        break
+                        continue
                 else:
                     print("no results found")
                     names_str = "No results found"
