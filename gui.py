@@ -1,7 +1,9 @@
 from tkinter import *
 import najat_client as client
+
 root=Tk()
 
+# defining variables
 root.title("menu")
 request_type=""
 sub_menue_choise=""
@@ -9,9 +11,12 @@ msg=""
 global userName
 userName=""
 choice=""
+
+#this function clears the gui from widget
 def clear():
       for widget in root.grid_slaves():
         widget.destroy()
+
 #The selected article details are passed as the value to this method. The GUI then displays it.
 def view_full_data(value):
     data=value
@@ -19,23 +24,25 @@ def view_full_data(value):
     root.geometry("1500x500")
     Label(root,text=str(data),font=("Times New Roman", 12),fg="dark green").grid(row=0, column=0,columnspan=5)
     Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=1, column=0,columnspan=5)
-# This methode send the chossen title to the server and recieved artical deatile and pass it to the view_full_data as it parameter
+
+# This method send the chosen title and recieves artical details and pass it to the view_full_data as it parameter
 def send_choice(value):
     global choice
     choice=value
     clear()
     root.geometry("200x120")
+    print(" choice is sent \n")
+    print(" the choice is ",choice,"\n")
+    #pass artical details to the view_full_data as it parameter
     full_data=send_gui_choice()
-    print(" choice is sent ")
-    print("")
-    print(" the choice is ",choice)
-    print("")
-    print(" this is the full data ", full_data)
+    print(" this is the full data :", full_data)
+    # desgining the GUI page 
     empyt_lable1=Label(root,text=""*5).grid(row=0,column=0)
     Label(root,text="  your choice is sent ",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
     empty_lable2=Label(root,text=""*5).grid(row=2,column=0)
     Button(root,text=" view full data", command=lambda:view_full_data(full_data) ,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=1)
 
+# take the title list as parameter then it creates a radio button for each (title,name) 
 def creat_titles_radioButoones(value):
     titles=value
     clear()
@@ -60,15 +67,18 @@ def creat_titles_radioButoones(value):
         clear()
         for i in range(0,titles_length):
             title=my_list[i]
+            # if title equal empty string it will ignore it 
             if title=="":
                 continue 
             elif title=="[Removed]":
                 continue
+            # if no artical available from the server it will show a meesage to client and give it the options to go back to the main menu 
             if title=='No articles available':
                 clear()
                 no_artical=True
                 erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
                 Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=counter+3, column=0)
+             # if no sources available from the server it will show a meesage to client and give it the options to go back to the main menu 
             elif title=="No sources available":
                 clear()
                 no_artical=True
@@ -77,12 +87,13 @@ def creat_titles_radioButoones(value):
             else:    
                 Radiobutton(root,text=str(title),variable=option_value,value=str(title),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=counter,column=0)
                 counter=counter+1
-      
+        # if there is an artical it will allow the user to send it choice to server
         if no_artical==False:
             Button(root,text=" send your choice ",command=lambda:send_choice(option_value.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=counter+2,column=0,columnspan=2)
             print(" your choice is sent ")
             empty_lable2=Label(root,text=""*5).grid(row=counter+1,column=0,columnspan=2)
             print(" the choice is ",option_value.get()) 
+
 # send the selected options by clint (request type: heldline or sources , sub choice , msg )
 def send(value):
     # global button_clicked,msg,send_button
@@ -96,6 +107,7 @@ def send(value):
     youChoosed=Label(root,text=" you chose",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
     choosen_vlaue=Label(root,text=value,font=("Times New Roman", 16)) .grid(row=2,column=0,columnspan=2)
     empty_lable2=Label(root,text=""*5).grid(row=3,column=0,columnspan=2)
+
     # send the option value to the server
     option_value=send_request()
     print("")
@@ -103,7 +115,8 @@ def send(value):
     print(" request  is sent to server")
     print("")
     recivede_titles=Button(root,text=" view recived titles ",command=lambda:creat_titles_radioButoones(option_value),font=("Times New Roman", 14),fg="dark green",padx=20).grid(row=4,column=0,columnspan=2)
-# tack the entered vlaue and send it to the 
+
+# take the entered vlaue and send it to the server
 def enter_input():
     root.geometry("315x130")
     global msg,request_type,sub_menue_choise
@@ -113,7 +126,8 @@ def enter_input():
     key_word=box.get()
     send_button=Button(root,text="send",command=lambda:send(key_word),padx=40,font=("Times New Roman", 14),fg="dark green").grid(row=6,column=1)
     back_to_main=Button(root,text="back to the main menu",command=main_menu,padx=20,font=("Times New Roman", 14),fg="dark green").grid(row=6,column=0)
-# in this methode user enter the key word he want   
+
+# in this method user enter the key word they want   
 def search_for_key_words():
     clear()
     root.geometry("230x100")
@@ -122,7 +136,8 @@ def search_for_key_words():
     box=Entry(root,width=35,borderwidth=5)
     box.grid(row=1,column=0)
     done=Button(root,text="done",command=enter_input,font=("Times New Roman", 14),fg="dark green").grid(row=6,column=0)
-# in this methode user choose the catogrey user want from headlines catogrey then send the vlaue using send button     
+
+# in this method user choose the catogrey user want from headlines catogrey then send the vlaue using send button     
 def search_for_catogry_headlines() :
     clear()
     global request_type,sub_menue_choise
@@ -141,7 +156,8 @@ def search_for_catogry_headlines() :
     print(" option_value",option_value.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
     send_button=Button(root,text="send",command=lambda:send(option_value.get()),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=1)
     back_to_main=Button(root,text="back to the main menu",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=0)
-# in this methode user choose the country user want from headlines countries then send the vlaue using send button   
+
+# in this method user choose the country user want from headlines countries then send the vlaue using send button   
 def search_for_country_headlines() :
     clear()
     global request_type,sub_menue_choise
@@ -163,7 +179,8 @@ def search_for_country_headlines() :
     send_button=Button(root,text="send",command=lambda:send(option_value.get()),font=("Times New Roman", 14),fg="dark green",padx=50)
     send_button.grid(row=10,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=40).grid(row=10,column=0)
-# this methode let user choose the list all option for headlines
+
+# this method let user choose the list all option for headlines
 def List_all_headlines():
     clear()
     global request_type,sub_menue_choise,msg
@@ -177,7 +194,8 @@ def List_all_headlines():
     print(" msg ",msg,"request",request_type,"sub_menue_choise",sub_menue_choise)
     send_button=Button(root,text="send",command=lambda:send(msg),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=1)
     Button(root,text="back to the main menu",command=main_menu,padx=10,font=("Times New Roman", 14),fg="dark green").grid(row=3,column=0)
-# this is the sub menu healdlines 
+
+#  the sub menu healdlines 
 def heald_menu():
     clear()
     root.geometry("365x205")
@@ -189,7 +207,8 @@ def heald_menu():
     country=Button(root,text="search for country",font=("Times New Roman", 14),fg="dark green",padx=15,command=search_for_country_headlines).grid(row=4,column=1)
     list_all=Button(root,text="List all new headline",font=("Times New Roman", 14),fg="dark green",padx=11,command=List_all_headlines).grid(row=3,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=95).grid(row=5,column=0,columnspan=2)
-# this is the sources cateogry , user choose on cateogry and it will be sent using send butoon 
+
+#  the sources cateogry choices  , user choose on cateogry and it will be sent using send butoon 
 def search_for_catogry_sourc() :
     clear()
     global request_type,sub_menue_choise
@@ -208,7 +227,8 @@ def search_for_catogry_sourc() :
     empty_lable2=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=7,column=0,columnspan=2)
     send_button=Button(root,text="send",command=lambda:send(option_value.get()),padx=50,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=1)
     back_to_main=Button(root,text="back to the main menu",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green").grid(row=8,column=0)
-#  this is the sources country, user choose on counrty and it will be sent using send butoon 
+
+#  the sources country choices , user choose on counrty and it will be sent using send butoon 
 def search_for_country_sourc() :
     clear()
     global request_type,sub_menue_choise
@@ -229,7 +249,8 @@ def search_for_country_sourc() :
     print(" option_value",option_value.get(),"request",request_type,"sub_menue_choise",sub_menue_choise)
     send_button=Button(root,text="send",command=lambda:send(option_value.get()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=10,column=1)
     back_to_main=Button(root,text="back to the main menu",command=main_menu,font=("Times New Roman", 14),fg="dark green",padx=30).grid(row=10,column=0)
-#this is the sources languages choices , user choose one language and it will be sent using send butoon 
+
+# sources languages choices , user choose one language and it will be sent using send butoon 
 def search_by_language_sourc():
     clear()
     global request_type,sub_menue_choise
@@ -244,6 +265,7 @@ def search_by_language_sourc():
     empty_lable2=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=3,column=0,columnspan=2)
     send_button=Button(root,text="send",font=("Times New Roman", 14),fg="dark green",command=lambda:send(option_vlaue.get())).grid(row=4,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu).grid(row=4,column=0)
+
 # this is the list all sources  and it will be sent using send butoon 
 def List_all_sourc():
     clear()
@@ -257,7 +279,8 @@ def List_all_sourc():
     msg="all_sources"
     send_button=Button(root,text="send",font=("Times New Roman", 14),fg="dark green",command=lambda:send(msg)).grid(row=3,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu).grid(row=3,column=0)
-# this is the sub menu " sources" user choose the wanted button than it take it to choose neded vlaue 
+
+# the sub menu "sources" user choose the wanted button than it take it to choose neded vlaue 
 def sourcemenue():
     clear()
     root.geometry("370x205")
@@ -269,7 +292,8 @@ def sourcemenue():
     b8=Button(root,text="search by language",font=("Times New Roman", 14),fg="dark green",padx=16,command=search_by_language_sourc).grid(row=4,column=0)
     b9=Button(root,text="List all",font=("Times New Roman", 14),fg="dark green",padx=63,command=List_all_sourc).grid(row=4,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=85).grid(row=5,column=0,columnspan=2)
-# this methode used to close the gui, client socket and send good bye to server 
+
+# this method closes the gui, client socket and send good bye to server 
 def closing():
     global request_type,sub_menue_choise,msg,userName
     request_type="quit"
@@ -278,6 +302,7 @@ def closing():
     client.send_username_request(userName,request_type,sub_menue_choise,msg)
     client.client_close()
     root.quit()
+
 # this the main menu 
 def main_menu():
     global request_type,sub_menue_choise,msg,userName
@@ -293,8 +318,7 @@ def main_menu():
     source=Button(root,command=sourcemenue,text="list all sourses",padx=35,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=3)
     quit=Button(root,command=closing,text="quit",padx=55,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=4)
 
-    
-# this methode allow user to enter user name once 
+# this method allow user to enter user name once 
 def enter_user_name():
     root.geometry("230x100")
     my_labal3=Label(root,text="Enter your user name ",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
@@ -305,6 +329,7 @@ def enter_user_name():
     done.grid(row=6,column=0)
     # return userName
 
+# if the user name variable is empty it will get username from user name box
 def get_username():
     global userName
     if userName=="":
@@ -312,6 +337,7 @@ def get_username():
         userName=userName_box.get()
         return userName
     else : return userName
+
 # this methode sends the requsted choices and recive the titles and return them back 
 def send_request():
     try:
@@ -329,7 +355,8 @@ def send_request():
     except Exception as e:
         print(f"Error in send_request: {e}")
         return "Error", "No response"
-# this methode sends the choosen title or name to server 
+    
+# this method sends the choosen title or name to server 
 def send_gui_choice() :
     global choice
     if choice=="":
@@ -338,7 +365,8 @@ def send_gui_choice() :
         client.send_choice(choice)
         full_data=client.recv()
         return full_data
-# call the etner user name to allow the user to enter its name 
+    
+# call the enter user name to allow the user to enter its name 
 enter_user_name()
 # keep gyi in  a loop
 root.mainloop()    
