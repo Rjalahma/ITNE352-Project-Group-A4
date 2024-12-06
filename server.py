@@ -176,13 +176,12 @@ def handle_client(sock, clientID):
                         author=str(article.get('author','no author provided'))
                         url=str(article.get('url','no url provided'))
                         date=str(article.get('publishedAt', 'no time provided' ))
-                        sourcedic=str(article.get("source"))
+                        sourcedic=(article.get("source"))
                         sourcename=str(sourcedic.get("name", "Unknown"))
 
                         article_details= (  "\n" +
                                             "Title: " + chosen_title + "\n" +
                                             "source name: " + sourcename + "\n" +
-                                            "Content: " + content + "\n" +
                                             "Description: " + description + "\n" +
                                             "Author: " + author + "\n" +
                                             "URL: " + url + "\n" +
