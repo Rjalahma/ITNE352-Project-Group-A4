@@ -353,12 +353,11 @@ def handle_client(sock, clientID):
 
         sock.close()
 
-        
-
+#setting up the server 
 def handle_server():
     print(30 * "-")
     print("The server is running")
-    #setting up the server 
+    #creating the socket
     ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssocket.bind(("127.0.0.1", 49999))
     ssocket.listen(3)
