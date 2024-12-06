@@ -57,7 +57,7 @@ def view_data(value):
     if request_type=="sources":
         my_list=w.split("\n")
     elif request_type=="headlines":
-        my_list=w.split("|")
+        my_list=w.split(",")
     n=len(my_list)
     print("="*25)
     no_artical= False
@@ -80,7 +80,7 @@ def view_data(value):
                 erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
                 Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=c+3, column=0)
             else:    
-                Radiobutton(root,text=str(k),variable=m,value=str(k),font=("Times New Roman", 14),fg="dark green",anchor="w", width=20).grid(row=c,column=0)
+                Radiobutton(root,text=str(k),variable=m,value=str(k),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=c,column=0)
                 c=c+1
       
         if no_artical==False:
