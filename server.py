@@ -161,16 +161,12 @@ def handle_client(sock, clientID):
 
             try:
             # receiving the title chosen from the client  
-                print("waiting to receive title chosen from the client ")
-                print("")
+                print("\nwaiting to receive title chosen from the client ")
                 chosen_title=sock.recv(2048).decode('utf-8')
-                print("")
-                print("the chosen title is received :", chosen_title)
-                print("")
-                print("now the details about the title will be collected")
-                print("")
+                print("\nthe chosen title is received :", chosen_title)
+                print("\nnow the details about the title will be collected")
             except Exception as e:
-                print("error receiving title chosen:",e)
+                print("\nerror receiving title chosen:",e)
             # extracting data based on the chosen title
             try:
                 for article in articles:
@@ -180,19 +176,21 @@ def handle_client(sock, clientID):
                         author=str(article.get('author','no author provided'))
                         url=str(article.get('url','no url provided'))
                         date=str(article.get('publishedAt', 'no time provided' ))
+                        sourcedic=str(article.get("source"))
+                        sourcename=str(sourcedic.get("name", "Unknown"))
 
                         article_details= (  "\n" +
                                             "Title: " + chosen_title + "\n" +
+                                            "source name: " + sourcename + "\n" +
                                             "Content: " + content + "\n" +
                                             "Description: " + description + "\n" +
                                             "Author: " + author + "\n" +
                                             "URL: " + url + "\n" +
                                             "Date: " + date + "\n" )
-                        print("")
-                        print(" article details:" ,article_details)
+
+                        print("\n article details:" ,article_details)
                         sock.sendall(article_details.encode('utf-8'))
-                        print("")
-                        print("the articles details are sent ")
+                        print("\nthe articles details are sent ")
                         break
 
                 else:
