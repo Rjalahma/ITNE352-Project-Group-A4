@@ -7,9 +7,9 @@ group A4 - section 1 -ITNE352-semester1
 Reem Abdulla Aljalahma 202206512 
 Najat Khalid Almalood 202207113
 ### table of contents 
-- [Requierments](Requierments)
-- [How to](How )
-- [the scripts](thescipts)
+- [Requierments](#Requierments)
+- [How to](#How)
+- [the scripts](#thescipts)
 - 
 ### Requierments 
 to run this system you need oi install newsapi Python package
