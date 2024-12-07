@@ -1,5 +1,5 @@
 from tkinter import *
-import najat_client as client
+import client as client
 
 root=Tk()
 

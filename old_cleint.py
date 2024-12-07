@@ -1,0 +1,213 @@
+import socket
+
+clinet_sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+clinet_sock.connect(("127.0.0.1",49999))
+print(" this is my client ")
+
+n=True
+while n==True:
+    print("Main menu: ")
+    print("1 search for headings ")
+    print("2 list all sourses ")
+    print("3 Quit ")
+    print(" ")
+    number=int(input(" first enter the required service number: "))
+    print(" ")
+    if number==1:
+        request_type="headlines"
+        print("Search headline menu:")
+        print("1 search for key words ")
+        print("2 search for catogry ")
+        print("3 search for country ")
+        print("4 List all new headline ")
+        print("5 back to the main menu ")
+        print(" ")
+        number_2=int(input("second enter the required service number :"))
+        if number_2==1:
+           sub_menue_choise="key_word"
+           key_word=input(" key word to be searched with")
+           msg=key_word
+        if number_2==2:
+            sub_menue_choise="by_catogry"
+            print('select the required catogry:')
+            print(" 1 business")
+            print(" 2 genral")
+            print(" 3 health")
+            print(" 4 seince")
+            print(" 5 sport")
+            print(" 6 technology")
+            print(" ")
+            catogry_num=int(input(" enter required catogry number:"))
+            match catogry_num:
+                case 1:
+                    msg="business_news"
+                case 2:
+                    msg="genral_news"
+                case 3:
+                    msg="health_news"
+                case 4:
+                    msg="seince_news"
+                case 5:
+                    msg="sport_news"
+                case 6:
+                    msg="technology_news"
+                case _:
+                    print("not vlaid catogry")
+                    continue
+            
+
+        if number_2==3:
+            sub_menue_choise="by_country"
+            print('select the required country')
+            print(" 1 au")
+            print(" 2 ca")
+            print(" 3 jp")
+            print(" 4 ae")
+            print(" 5 sa")
+            print(" 6 kr")
+            print(" 7 us")
+            print(" 6 ma")
+            catogry_num=int(input(" enter required catogry number"))
+
+
+            match catogry_num:
+                case 1:
+                   msg="au_news"
+                case 2:
+                    msg="ca_news"
+                case 3:
+                    msg="jp_news"
+                case 4:
+                    msg="ae_news"
+                case 5:
+                    msg="sa_news"
+                case 6:
+                    msg="kr_news"
+                case 7:
+                    msg="us_news"
+                case 8:
+                    msg="ma_news"
+                case _:
+                    print("not vlaid country")
+                    continue
+           
+        if number_2==4:
+           sub_menue_choise="list_all"
+           msg="all_news"
+        if number_2==5:
+            continue
+    if number==2:
+        request_type="sources"    
+        print("List of sources menu")
+        print("1 search by catogry ")
+        print("2 search by country ")
+        print("3 search by language ")
+        print("4 List all ")
+        print("5 back to the main menu  ")
+        number_3=int(input("  thired enter the required servise number "))
+        if number_3==1:
+            sub_menue_choise="by_catogry"
+            print('select the required catogry')
+            print(" 1 business")
+            print(" 2 genral")
+            print(" 3 health")
+            print(" 4 seince")
+            print(" 5 sport")
+            print(" 6 technology")
+            catogry_num=int(input(" enter required catogry number"))
+            match catogry_num:
+                case 1:
+                    msg="business_sources"
+                case 2:
+                    msg="genral_sources"
+                case 3:
+                    msg="health_sources"
+                case 4:
+                    msg="seince_sources"
+                case 5:
+                    msg="sport_sources"
+                case 6:
+                    msg="technology_sources"
+                case _:
+                    print("not vlaid catogry")
+                    continue
+        if number_3==2:
+            sub_menue_choise="by_country"
+            print('select the required country')
+            print(" 1 au")
+            print(" 2 ca")
+            print(" 3 jp")
+            print(" 4 ae")
+            print(" 5 sa")
+            print(" 6 kr")
+            print(" 7 us")
+            print(" 6 ma")
+            catogry_num=int(input(" enter required catogry number"))
+
+
+            match catogry_num:
+                case 1:
+                    msg="au_sources"
+                case 2:
+                    msg="ca_sources"
+                case 3:
+                    msg="jp_sources"
+                case 4:
+                    msg="ae_sources"
+                case 5:
+                    msg="sa_sources"
+                case 6:
+                    msg="kr_sources"
+                case 7:
+                    msg="us_sources"
+                case 8:
+                    msg="ma_sources"
+                case _:
+                    print("not vlaid country")
+                    continue
+           
+        if number_3==3:
+            sub_menue_choise="by_language"
+            print("choose the required language")
+            print(" 1 arabic")
+            print(" 2 engalish")
+            country_num=int(input(" the choosen language number "))
+            match country_num:
+                case 1:
+                    msg="ar"
+                case 2 :
+                    msg="en"
+                case _:
+                    print("not vlaid language")
+                    continue
+        if number_3==4:
+           sub_menue_choise="list_all"
+           msg="all_sources"
+        if number_3==5:
+            continue
+        
+        
+    if number==3:
+        msg="quit"
+        n=False
+    
+    
+    
+    
+    
+    clinet_sock.send(request_type.encode("ascii"))
+    print("")
+    clinet_sock.send(sub_menue_choise.encode("ascii"))
+    print("")
+
+    clinet_sock.send(msg.encode("ascii"))
+    data = clinet_sock.recv(1024).decode("ascii")
+    print( "data recived",data)
+    print("")
+        
+
+
+clinet_sock.close()
+
+
+
