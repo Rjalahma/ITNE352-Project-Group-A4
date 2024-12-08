@@ -368,5 +368,5 @@ def send_gui_choice() :
     
 # call the enter user name to allow the user to enter its name 
 enter_user_name()
-# keep gyi in  a loop
+# keep gui in  a loop
 root.mainloop()    
