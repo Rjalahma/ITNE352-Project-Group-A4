@@ -9,15 +9,15 @@ A multithreaded News Client/Server Information System, which exchanges informati
 - Najat Khalid Almalood 202207113
 ---
 ## Table of Contents
-1. [Requirements](#requirements)
-2. [How to Run the System](#how-to-run-the-system)
-3. [The Scripts](#the-scripts)
-4. [Additional Concepts](#additional-concepts)
-5. [Acknowledgments](#acknowledgments)
-6. [Conclusion](#conclusion)
-7. [Resources](#resources)
+1. [Requirements](#1.requirements)
+2. [How to Run the System](#2.how-to-run-the-system)
+3. [The Scripts](#3.the-scripts)
+4. [Additional Concepts](#4.additional-concepts)
+5. [Acknowledgments](#5.acknowledgments)
+6. [Conclusion](#6.conclusion)
+7. [Resources](#7.resources)
 ---
-## Requirements
+## 1.Requirements
 
 To run this system, you need to install the following dependencies:
 
@@ -30,7 +30,7 @@ You can install the required dependencies using the following command:
 pip install newsapi-python
 ```
 ---
-## How to Run the System
+## 2.How to Run the System
 
 ### Prerequisites
 
@@ -83,7 +83,7 @@ Before running the system, ensure you have the following installed:
 - The server will fetch the relevant news from the NewsAPI and send the data back to the client, which will display it in the GUI.
 
 ---
-## The Scripts
+## 3.The Scripts
 
 ### 1. **server.py**
 The `server.py` script is responsible for running the server side of the client-server communication. It listens for incoming client requests, processes them, interacts with a RESTful API to gather news, and sends the results back to the client.
@@ -234,7 +234,7 @@ def send_choice(message):
   ## Additional Concepts 
   As an additional concept,  As we mentioded before we have added a graphical user interface (GUI) to the system in order to help the client interact with the server more easily. The GUI is saved in the `gui.py` file, which takes the `client.py` as an import to allow easy communication between server and client. When the GUI starts, a window will appear. The user must write their username once, and then can send and receive multiple data to and from the server using the GUI window.
  ---
-## Acknowledgments 
+## 4.Acknowledgments 
 We would like to express our gratitude to the following individuals and resources that helped us throughout this project:
 - **youtube channel**:
 -  [Codemy.com](https://www.youtube.com/@codemycom), for their invaluable guidance/videos 
@@ -242,12 +242,12 @@ We would like to express our gratitude to the following individuals and resource
   - [NewsAPI](https://newsapi.org/) - For providing access to current news data through their RESTful API
   - [Python](https://www.python.org/) - For being the core programming language used in this project 
  ---
-## Conclusion 
+## 5.Conclusion 
 
 This project shows how the client-server model works with the API. And how multithreading allows multiple users to communicate simultaneously with the server. Throughout this project, we learned the importance of ensuring harmony between client and server in order to complete the work to its best ability. Through this program, I learned that Python allows us to accomplish a lot and is easy to use, except for the fact that any indentation problem can cause a huge mess.
 
  ---
-## Resources
+## 7.Resources
 - **NewsAPI Documentation**:
   The primary source for news data in the project, NewsAPI provides a comprehensive API for retrieving articles, headlines, and sources.  
   - Link: [NewsAPI Documentation](https://newsapi.org/docs/endpoints/everything)
