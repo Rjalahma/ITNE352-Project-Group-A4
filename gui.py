@@ -1,5 +1,5 @@
 from tkinter import *
-import najat_client as client
+import client as client
 
 root=Tk()
 
@@ -53,7 +53,10 @@ def creat_titles_radioButoones(value):
     # counter to indicat the place the radio butoones will be attached in using grid 
     counter=0
     option_value=StringVar()
-    root.geometry("1500x1000")
+    if request_type=="headlines":  
+        root.geometry("1500x1000")
+    else:
+        root.geometry("300x650")
     my_list=titles.split("\n")
     titles_length=len(my_list)
     print(" myyyy list",my_list)
@@ -202,9 +205,9 @@ def heald_menu():
     empty_lable1=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0,columnspan=2)
     search_heaadlines=Label(root,text="Search headline menu",font=("Times New Roman", 16),fg="dark green").grid(row=1,column=0,columnspan=2)
     empty_lable2=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green").grid(row=2,column=0,columnspan=2)  
-    key_word=Button(root,text="search for key words",padx=8,font=("Times New Roman", 14),fg="dark green",command=search_for_key_words).grid(row=3,column=0)
-    catogrey=Button(root,text="search for cateogry",font=("Times New Roman", 14),fg="dark green",padx=20,command=search_for_catogry_headlines).grid(row=4,column=0)
-    country=Button(root,text="search for country",font=("Times New Roman", 14),fg="dark green",padx=15,command=search_for_country_headlines).grid(row=4,column=1)
+    key_word=Button(root,text="search for key words",padx=12,font=("Times New Roman", 14),fg="dark green",command=search_for_key_words).grid(row=3,column=0)
+    catogrey=Button(root,text="search for cateogry",font=("Times New Roman", 14),fg="dark green",padx=18,command=search_for_catogry_headlines).grid(row=4,column=0)
+    country=Button(root,text="search for country",font=("Times New Roman", 14),fg="dark green",padx=16,command=search_for_country_headlines).grid(row=4,column=1)
     list_all=Button(root,text="List all new headline",font=("Times New Roman", 14),fg="dark green",padx=11,command=List_all_headlines).grid(row=3,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=95).grid(row=5,column=0,columnspan=2)
 
@@ -287,10 +290,10 @@ def sourcemenue():
     empty_lable=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=0,column=0,columnspan=2)
     my_lable2=Label(root,text="List of sources menu",font=("Times New Roman", 16),fg="dark green",).grid(row=1,column=0,columnspan=2)
     empty_lable=Label(root,text=""*5,font=("Times New Roman", 16),fg="dark green",).grid(row=2,column=0,columnspan=2)
-    b6=Button(root,text="search by cateogry",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_catogry_sourc).grid(row=3,column=0)
-    b7=Button(root,text="search by country",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_country_sourc).grid(row=3,column=1)
-    b8=Button(root,text="search by language",font=("Times New Roman", 14),fg="dark green",padx=16,command=search_by_language_sourc).grid(row=4,column=0)
-    b9=Button(root,text="List all",font=("Times New Roman", 14),fg="dark green",padx=63,command=List_all_sourc).grid(row=4,column=1)
+    categry=Button(root,text="search by cateogry",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_catogry_sourc).grid(row=3,column=0)
+    country=Button(root,text="search by country",font=("Times New Roman", 14),fg="dark green",padx=19,command=search_for_country_sourc).grid(row=3,column=1)
+    language=Button(root,text="search by language",font=("Times New Roman", 14),fg="dark green",padx=17,command=search_by_language_sourc).grid(row=4,column=0)
+    liast_all=Button(root,text="List all",font=("Times New Roman", 14),fg="dark green",padx=63,command=List_all_sourc).grid(row=4,column=1)
     back_to_main=Button(root,text="back to the main menu",font=("Times New Roman", 14),fg="dark green",command=main_menu,padx=85).grid(row=5,column=0,columnspan=2)
 
 # this method closes the gui, client socket and send good bye to server 
