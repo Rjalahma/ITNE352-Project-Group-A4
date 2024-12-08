@@ -156,7 +156,7 @@ function 2,3,4 will show the sub menus as button each button of sub menu will ca
 #### 5.`send_request()`
   After sending the request, a message will appear telling the user that the request is sent.
 -then a button will show, called "view received titles" clickling on it will call: 
-#### 6.`view_received_titles()` function
+#### 6.`creat_titles_radioButoones()` function
 then we will have Two cases 
 1.	There is data from API:
 •	If there are articles or sources in the API for the user's request, the GUI will show at least one or more (titles or names) received from the server.
@@ -166,7 +166,7 @@ then we will have Two cases
 •	If there is no data about the user's request, a message will appear to the user indicating that there is no data for their request.
 #### 7. `back_to_main_menu()`
 Allows the user to return to the main menu after receiving data to quit or if they wish to make a new request
-#### 8. `quit_connection()`
+#### 8. `closing()`
 When the user selects **Quit**, this function will:
 - Send a message to the server to close the connection.
 - Terminate the GUI and close the client socket
@@ -176,9 +176,9 @@ When the user selects **Quit**, this function will:
 2. **`Main Menu`**: Provides buttons for Headlines, Sources, and Quit.
 3. **`headlines()`** or **`sources()`**: Displays submenu choices based on the selected option.
 4. **`send_request()`**: Sends the user request to the server.
-5. **`view_received_titles()`**: Displays the titles or sources returned by the server.
+5. **`creat_titles_radioButoones`**: Displays the titles or sources returned by the server.
 6. **`back_to_main_menu()`**: Allows the user to return to the main menu or quit.
-7. **`quit_connection()`**: Closes the connection and terminates the client.
+7. **`closing()`**: Closes the connection and terminates the client.
 8. 
 ### 3. **client.py**
    The client script is a simple Python file that set up the client socket and contains four main functions.
