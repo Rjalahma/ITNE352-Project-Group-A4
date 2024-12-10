@@ -159,13 +159,13 @@ def handle_client(sock, clientID):
                 print("Error handling headlines subrequests", e)
 
             try:
-                # convert data to jason then send it 
+                # convert data to json then send it 
                 json_string = json.dumps(data)
                 sock.sendall(json_string.encode("utf-8"))
-                print("\ntitles are sent sucssefully")
+                print("\ntitles,authors,sources are sent sucssefully")
 
             except Exception as e :
-                sock.sendall(b"error sending the titles")
+                sock.sendall(b"error sending the titles,authors,sources")
                 print("error sending the titles ", e)
 
             try:
