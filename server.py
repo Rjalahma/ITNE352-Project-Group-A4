@@ -140,9 +140,9 @@ def handle_client(sock, clientID):
                                 sourcename=source.get("name", "Unknown Source name")
                             else:
                                 sourcename="no Source available"
-                            # save these vales with keys 
+                            # save these vales with keys in a dic
                             item={ "title":title,"author":author,"source_name":sourcename}
-                            # append them in array called data
+                            # put each dic in a list as an item 
                             data.append(item)
                         pprint.pprint(data ,width=100)
                     else: # if there is no articles 
