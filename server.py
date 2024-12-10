@@ -12,7 +12,7 @@ newsapi = NewsApiClient(api_key=apikey)
 def save_to_json(client_name, option, group_id, data):
     file_name=f"{client_name}{option}{group_id}.json"
     print("JSON file is created")
-    with open (file_name,"w") as f :
+    with open (file_name,"x") as f :
         json.dump(data, f , indent=4)
     print("data saved to :", file_name+"\n")
     return data
@@ -128,7 +128,7 @@ def handle_client(sock, clientID):
                     # extracting titles from the articles
                     data=[]
                     time.sleep(3)
-                    print("the titles of all the articles:")
+                    print("the titles,authors,sources of all the articles:")
                     if articles:
                         num=1
                         # for loop to get all titles with there author and source name

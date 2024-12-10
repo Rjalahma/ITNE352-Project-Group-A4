@@ -58,7 +58,7 @@ def creat_titles_radioButoones(value):
     empty_lable1=Label(root,text=""*5).grid(row=0,column=0)
     # extracting the data 
     if request_type=="headlines" :
-        root.geometry("1500x1000")
+        root.geometry("1500x500")
         if titles=='No articles available':
             clear()
             no_artical=True
@@ -70,7 +70,7 @@ def creat_titles_radioButoones(value):
         # my_list=dictionary
     else:
         # if request type equal source 
-        root.geometry("300x650")
+        root.geometry("300x600")
         my_list=titles.split("\n")
         titles_length=len(my_list)
 
@@ -85,7 +85,7 @@ def creat_titles_radioButoones(value):
             elif title=="[Removed]":
                 continue
             # creat the radio button  the text is title,author,source name but the vlaue is only the title
-            Radiobutton(root,text=str(article),variable=option_value, command=None,value=str(title),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=counter,column=0)
+            Radiobutton(root,text=str(article),variable=option_value, command=None,value=str(title),font=("Times New Roman", 10),fg="dark green",anchor="w").grid(row=counter,column=0)
             counter=counter+1
     if request_type=="sources":
         for i in range(0,titles_length):
