@@ -2,6 +2,7 @@ import socket
 import threading
 import json
 import time
+import pprint
 from newsapi import NewsApiClient
 
 apikey = "75087d7737f64055bf57575247e9a59d"
@@ -125,20 +126,25 @@ def handle_client(sock, clientID):
                     articles = dataFromApi.get("articles",[])
 
                     # extracting titles from the articles
-                    titles = []
+                    data=[]
                     time.sleep(3)
                     print("the titles of all the articles:")
                     if articles:
                         num=1
+                        # for loop to get all titles with there author and source name
                         for article in articles:
-                            title= article.get("title")
-                            print(" title ",num,":",title)
-                            titles.append({"title":title}) # Add the title to the titles 
-                            num+=1
-                        titles_str =" "
-                        for title in titles:
-                            titles_str+= title["title"]+"\n"
-
+                            title= article.get("title","")
+                            author=article.get("author","")
+                            source=article.get("source")
+                            if source:
+                                sourcename=source.get("name", "Unknown Source name")
+                            else:
+                                sourcename="no Source available"
+                            # save these vales with keys 
+                            item={ "title":title,"author":author,"source_name":sourcename}
+                            # append them in array called data
+                            data.append(item)
+                        pprint.pprint(data ,width=100)
                     else: # if there is no articles 
                         print("No articles available")
                         sock.sendall(b"No articles available")  
@@ -147,14 +153,15 @@ def handle_client(sock, clientID):
                 # if there is no API results
                 else: 
                         print("no results from API found")
-                        titles_str = "No results found."    
+                        data = "No results found."    
  
             except Exception as e:
                 print("Error handling headlines subrequests", e)
 
             try:
-                # Send the titles
-                sock.sendall(titles_str.encode("utf-8"))
+                # convert data to jason then send it 
+                json_string = json.dumps(data)
+                sock.sendall(json_string.encode("utf-8"))
                 print("\ntitles are sent sucssefully")
 
             except Exception as e :
