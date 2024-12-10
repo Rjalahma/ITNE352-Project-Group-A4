@@ -1,6 +1,6 @@
 from tkinter import *
 import client as client
-
+import json
 root=Tk()
 
 # defining variables
@@ -46,56 +46,73 @@ def send_choice(value):
 def creat_titles_radioButoones(value):
     titles=value
     clear()
+    # if there is no reciveed data
     if not titles:
         Error_labale=Label(root,text=" error at reciving the titles ").grid(rotitles=0, column=0)
         return main_menu()
-    print(" choose from ",titles)
-    # counter to indicat the place the radio butoones will be attached in using grid 
+    # intial vlaues
     counter=0
     option_value=StringVar()
-    if request_type=="headlines":  
-        root.geometry("1500x1000")
-    else:
-        root.geometry("300x650")
-    my_list=titles.split("\n")
-    titles_length=len(my_list)
-    print(" myyyy list",my_list)
-    print("="*25)
+    option_value.set("")
     no_artical= False
     empty_lable1=Label(root,text=""*5).grid(row=0,column=0)
-    if titles_length is None:
-        clear()
-        
+    # extracting the data 
+    if request_type=="headlines" :
+        root.geometry("1500x1000")
+        if titles=='No articles available':
+            clear()
+            no_artical=True
+            # if no artical available from the server it will show a meesage to client and give it the options to go back to the main menu 
+            erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
+            Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=counter+3, column=0)
+        my_list = json.loads(titles)
+        titles_length=len(my_list)
+        # my_list=dictionary
     else:
-        clear()
-        for i in range(0,titles_length):
-            title=my_list[i]
+        # if request type equal source 
+        root.geometry("300x650")
+        my_list=titles.split("\n")
+        titles_length=len(my_list)
+
+
+    if request_type=="headlines":
+        for article in my_list:
+            # extract the title vlaue from other vlaue to return it to server later on 
+            title=article["title"]
             # if title equal empty string it will ignore it 
             if title=="":
                 continue 
             elif title=="[Removed]":
                 continue
-            # if no artical available from the server it will show a meesage to client and give it the options to go back to the main menu 
-            if title=='No articles available':
+            # creat the radio button  the text is title,author,source name but the vlaue is only the title
+            Radiobutton(root,text=str(article),variable=option_value, command=None,value=str(title),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=counter,column=0)
+            counter=counter+1
+    if request_type=="sources":
+        for i in range(0,titles_length):
+
+            title=my_list[i]
+            
+            # if title equal empty string it will ignore it 
+            if title=="":
+                continue 
+            elif title=="[Removed]":
+                continue
+
+            # if no sources available from the server it will show a meesage to client and give it the options to go back to the main menu 
+            if title=="No sources available":
                 clear()
                 no_artical=True
                 erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
                 Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=counter+3, column=0)
-             # if no sources available from the server it will show a meesage to client and give it the options to go back to the main menu 
-            elif title=="No sources available":
-                clear()
-                no_artical=True
-                erroe_labale=Label(root,text="No articles available",font=("Times New Roman", 16),fg="dark green").grid(row=0,column=0)
-                Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=counter+3, column=0)
-            else:    
+            else :    
                 Radiobutton(root,text=str(title),variable=option_value,value=str(title),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=counter,column=0)
                 counter=counter+1
-        # if there is an artical it will allow the user to send it choice to server
-        if no_artical==False:
-            Button(root,text=" send your choice ",command=lambda:send_choice(option_value.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=counter+2,column=0,columnspan=2)
-            print(" your choice is sent ")
-            empty_lable2=Label(root,text=""*5).grid(row=counter+1,column=0,columnspan=2)
-            print(" the choice is ",option_value.get()) 
+    # if there is an artical it will allow the user to send it choice to server
+    if no_artical==False:
+        Button(root,text=" send your choice ",command=lambda:send_choice(option_value.get().strip()),font=("Times New Roman", 14),fg="dark green",padx=50).grid(row=counter+2,column=0,columnspan=2)
+        print(" your choice is sent ")
+        empty_lable2=Label(root,text=""*5).grid(row=counter+1,column=0,columnspan=2)
+        print(" the choice is ",option_value.get()) 
 
 # send the selected options by clint (request type: heldline or sources , sub choice , msg )
 def send(value):
