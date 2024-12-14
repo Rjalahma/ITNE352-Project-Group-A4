@@ -4,16 +4,17 @@ import json
 import time
 import pprint
 from newsapi import NewsApiClient
-
+counter=1
 apikey = "75087d7737f64055bf57575247e9a59d"
 newsapi = NewsApiClient(api_key=apikey)
 
 # this function will take the requests parameters/data and save them into json file
-def save_to_json(client_name, option, group_id, data):
-    file_name=f"{client_name}{option}{group_id}.json"
+def save_to_json(client_name, option,choice,msg, group_id, data):
+    file_name=f"{client_name}{option}{"-"}{choice}{"-"}{msg}{group_id}.json"
     print("JSON file is created")
-    with open (file_name,"x") as f :
+    with open (file_name,"w") as f :
         json.dump(data, f , indent=4)
+         
     print("data saved to :", file_name+"\n")
     return data
 
@@ -45,14 +46,16 @@ def handle_client(sock, clientID):
     print("New connection from", clientID[0], "is accepted", "with the port number:", clientID[1])
     print("Wait for the client to send a request")
    
-
+    user_name=sock.recv(2084).decode() 
+    print (f"{user_name}{"  is connected"}")
+    print (f"{"Hi "}{user_name}")
     while True:
         try:
             #receiving the name of the client + request type(headlines,sources)+ subrequest type(category,country etc..)+ datarequested(general,us etc..)
             dataFromClient = sock.recv(2084).decode()  # Receive data from client
             # beacuse all data recieved in one object now we will split them so we can work with them seperatly 
             values = dataFromClient.split("|")
-            user_name,request, subRequest, dataRequested = values
+            request, subRequest, dataRequested = values
 
             if request !="quit":
                 print("\nnew request from ",user_name," is accepted !\n")
@@ -120,7 +123,7 @@ def handle_client(sock, clientID):
                 results = get_headlines(params) 
                 if results :
                     # save the results to JSON file (calling the method) and save it 
-                    dataFromApi =save_to_json(user_name, "-headlines", "-A4", results)  
+                    dataFromApi =save_to_json(user_name, "-headlines",str(subRequest),str(dataRequested), "-A4", results)  
                     
                     # extracting articles from the api data 
                     articles = dataFromApi.get("articles",[])
@@ -128,7 +131,7 @@ def handle_client(sock, clientID):
                     # extracting titles from the articles
                     data=[]
                     time.sleep(3)
-                    print("the titles,authors,sources of all the articles:")
+                    print("the titles of all the articles:")
                     if articles:
                         num=1
                         # for loop to get all titles with there author and source name
@@ -140,9 +143,9 @@ def handle_client(sock, clientID):
                                 sourcename=source.get("name", "Unknown Source name")
                             else:
                                 sourcename="no Source available"
-                            # save these vales with keys in a dic
+                            # save these vales with keys 
                             item={ "title":title,"author":author,"source_name":sourcename}
-                            # put each dic in a list as an item 
+                            # append them in array called data
                             data.append(item)
                         pprint.pprint(data ,width=100)
                     else: # if there is no articles 
@@ -159,19 +162,19 @@ def handle_client(sock, clientID):
                 print("Error handling headlines subrequests", e)
 
             try:
-                # convert data to json then send it 
+                # convert data to jason then send it 
                 json_string = json.dumps(data)
                 sock.sendall(json_string.encode("utf-8"))
-                print("\ntitles,authors,sources are sent sucssefully")
+                print("\ntitles are sent sucssefully")
 
             except Exception as e :
-                sock.sendall(b"error sending the titles,authors,sources")
+                sock.sendall(b"error sending the titles")
                 print("error sending the titles ", e)
 
             try:
                 # receiving the title chosen from the client  
                 print("\nwaiting to receive title chosen from the client ")
-                chosen_title=sock.recv(2048).decode("utf-8")
+                chosen_title=sock.recv(2048).decode("utf-8").strip()
                 print("\nthe chosen title is received :", chosen_title)
 
             except Exception as e:
@@ -181,7 +184,7 @@ def handle_client(sock, clientID):
                 print("\nnow the details about the title will be collected")
             try:
                 for article in articles:
-                    if article.get("title") == chosen_title.strip(): #compare the titles then extract the article
+                    if article.get("title").strip().lower() == chosen_title.lower(): #compare the titles then extract the article
                         description=str(article.get("description","no description provided"))
                         author=str(article.get("author","no author provided"))
                         url=str(article.get("url","no url provided"))
@@ -204,7 +207,7 @@ def handle_client(sock, clientID):
                 else:
                     print("the title chosen is not in the titles list")
                     sock.sendall(b"the title chosen is not in the titles list")
-                    break
+                    continue
                 continue
             
             except Exception as e:
@@ -270,7 +273,7 @@ def handle_client(sock, clientID):
                 results = get_sources(params)
                 if results:
                     # save the results to JSON file (calling the method) and save it 
-                    dataFromApi =save_to_json(user_name, "-sources", "-A4", results) 
+                    dataFromApi =save_to_json(user_name, "-sources",str(subRequest),str(dataRequested), "-A4", results) 
 
                     # extracting sources from the api data
                     sources = dataFromApi.get("sources", [])

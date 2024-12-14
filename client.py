@@ -12,10 +12,10 @@ def send_choice(message):
     except Exception as e:
         print("Error in sending:", e)
 # send the request to client
-def send_username_request(username,request_type,sub_menue_choise,msg):
+def send_username_request(request_type,sub_menue_choise,msg):
 
     try:
-        message = "|".join([username,request_type,sub_menue_choise,msg])
+        message = "|".join([request_type,sub_menue_choise,msg])
         clinet_sock.send(message.encode("ascii"))
         print(" user name and request is  sent from najat client ")
         print(" the message is ",message)

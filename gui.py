@@ -21,9 +21,12 @@ def clear():
 def view_full_data(value):
     data=value
     clear()
-    root.geometry("1500x500")
-    Label(root,text=str(data),font=("Times New Roman", 12),fg="dark green").grid(row=0, column=0,columnspan=5)
-    Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 14),fg="dark green").grid(row=1, column=0,columnspan=5)
+    root.geometry("250x700")
+    # root.destroy()
+    empty_Label=Label(root, text="").grid(row=0, column=0)
+    empty_Label=Label(root, text="").grid(row=0, column=1)
+    Label(root,text=str(data),font=("Times New Roman", 12),fg="dark green",wraplength=200, justify="center").grid(row=1, column=0,columnspan=10,rowspan=10)
+    Button(root, text="Back to Main Menu", command=main_menu,font=("Times New Roman", 12),fg="dark green",padx=15).grid(row=13, column=0,columnspan=5)
 
 # This method send the chosen title and recieves artical details and pass it to the view_full_data as it parameter
 def send_choice(value):
@@ -58,7 +61,7 @@ def creat_titles_radioButoones(value):
     empty_lable1=Label(root,text=""*5).grid(row=0,column=0)
     # extracting the data 
     if request_type=="headlines" :
-        root.geometry("1500x500")
+        root.geometry("1500x1000")
         if titles=='No articles available':
             clear()
             no_artical=True
@@ -70,7 +73,7 @@ def creat_titles_radioButoones(value):
         # my_list=dictionary
     else:
         # if request type equal source 
-        root.geometry("300x600")
+        root.geometry("300x650")
         my_list=titles.split("\n")
         titles_length=len(my_list)
 
@@ -85,7 +88,7 @@ def creat_titles_radioButoones(value):
             elif title=="[Removed]":
                 continue
             # creat the radio button  the text is title,author,source name but the vlaue is only the title
-            Radiobutton(root,text=str(article),variable=option_value, command=None,value=str(title),font=("Times New Roman", 10),fg="dark green",anchor="w").grid(row=counter,column=0)
+            Radiobutton(root,text=str(article),variable=option_value, command=None,value=str(title),font=("Times New Roman", 14),fg="dark green",anchor="w").grid(row=counter,column=0)
             counter=counter+1
     if request_type=="sources":
         for i in range(0,titles_length):
@@ -319,7 +322,7 @@ def closing():
     request_type="quit"
     sub_menue_choise="good"
     msg="bye"
-    client.send_username_request(userName,request_type,sub_menue_choise,msg)
+    client.send_username_request(request_type,sub_menue_choise,msg)
     client.client_close()
     root.quit()
 
@@ -338,6 +341,12 @@ def main_menu():
     source=Button(root,command=sourcemenue,text="list all sourses",padx=35,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=3)
     quit=Button(root,command=closing,text="quit",padx=55,pady=10,font=("Times New Roman", 14),fg="dark green").grid(row=2,column=4)
 
+def wellcome():
+    global userName
+    userName=get_username()
+    clear ()
+    main_menu()
+    send_userName(userName)
 # this method allow user to enter user name once 
 def enter_user_name():
     root.geometry("230x100")
@@ -345,7 +354,7 @@ def enter_user_name():
     global userName_box
     userName_box=Entry(root,width=35,borderwidth=5)
     userName_box.grid(row=1,column=0)
-    done=Button(root,text="Done",command=main_menu,padx=30,font=("Times New Roman", 14),fg="dark green")
+    done=Button(root,text="Done",command=wellcome,padx=30,font=("Times New Roman", 14),fg="dark green")
     done.grid(row=6,column=0)
     # return userName
 
@@ -361,12 +370,13 @@ def get_username():
 # this methode sends the requsted choices and recive the titles and return them back 
 def send_request():
     try:
-        global  request_type, sub_menue_choise,msg,userName
-        if request_type =="" or sub_menue_choise==""or msg=="" or userName=="":
-            print (" one of vlaue request is empty" , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
+        # global  request_type, sub_menue_choise,msg,userName
+        global  request_type, sub_menue_choise,msg
+        if request_type =="" or sub_menue_choise==""or msg=="" :
+           # print (" one of vlaue request is empty" , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
             return "no request sent"
-        print ("  all vlaues are good " , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
-        client.send_username_request(userName,request_type,sub_menue_choise,msg)
+        #print ("  all vlaues are good " , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
+        client.send_username_request(request_type,sub_menue_choise,msg)
         titels=client.recv()
         print ("  all vlaues are good " , " username is " , userName, " request type is ", request_type," sub choice is ", sub_menue_choise," massege is ",msg)
         print(" the client list  is " , titels)
@@ -385,7 +395,9 @@ def send_gui_choice() :
         client.send_choice(choice)
         full_data=client.recv()
         return full_data
-    
+def send_userName(user):
+    client.send_choice(user)
+    print(" you user name is sent" , userName)   
 # call the enter user name to allow the user to enter its name 
 enter_user_name()
 # keep gui in  a loop
