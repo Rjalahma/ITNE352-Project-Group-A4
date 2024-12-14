@@ -87,7 +87,7 @@ Before running the system, ensure you have the following installed:
 
 ### 1. **server.py**
 The `server.py` script is responsible for running the server side of the client-server communication. It listens for incoming client requests, processes them, interacts with a RESTful API to gather news, and sends the results back to the client.
-**-fisrt step is setting up the socket (dine in `handle_server()` function )** , code snipper:
+**-fisrt step is setting up the socket (dine in `handle_server()` function )** , code snippet:
   ```python
     def handle_server():
     print(30 * "-")
